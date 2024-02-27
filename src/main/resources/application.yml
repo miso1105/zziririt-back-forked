@@ -1,0 +1,76 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DEV_DATASOURCE_USERNAME}
+    password: ${SPRING_DEV_DATASOURCE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        show_sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        orm:
+          jdbc:
+            bind: trace
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${SPRING_PROD_DATASOURCE_URL}
+    username: ${SPRING_PROD_DATASOURCE_USERNAME}
+    password: ${SPRING_PROD_DATASOURCE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        show_sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        orm:
+          jdbc:
+            bind: trace
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: ${SPRING_TEST_DATASOURCE_URL}
+    username: ${SPRING_TEST_DATASOURCE_USERNAME}
+    password: ${SPRING_TEST_DATASOURCE_PASSWORD}
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        show_sql: true
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
