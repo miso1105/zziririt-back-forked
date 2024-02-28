@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
+    url: ${SPRING_DEV_DATASOURCE_URL}
     username: ${SPRING_DEV_DATASOURCE_USERNAME}
     password: ${SPRING_DEV_DATASOURCE_PASSWORD}
   jpa:
@@ -42,7 +42,7 @@ spring:
         use_sql_comments: true
         show_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     open-in-view: false
 logging:
   level:
