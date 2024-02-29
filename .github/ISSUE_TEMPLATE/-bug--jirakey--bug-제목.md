@@ -1,7 +1,7 @@
 ---
-name: "[Bug-JIRAKEY] Bug 제목"
+name: "[Bug] JIRAKEY: Bug 제목"
 about: Create a report to help us improve
-title: "[Bug-JIRAKEY] Bug 제목"
+title: "[Bug] JIRAKEY: Bug 제목"
 labels: enhancement
 assignees: ''
 

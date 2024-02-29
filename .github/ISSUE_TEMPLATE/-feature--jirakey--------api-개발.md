@@ -1,7 +1,7 @@
 ---
-name: "[Feature-JIRAKEY] 할일 제목"
+name: "[Feature] JIRAKEY: ..... API 개발"
 about: 기능 목적 혹은 기술 방식 요약
-title: "[Feature-ZRR]"
+title: "[Feature] JIRAKEY: 할 일 제목"
 labels: enhancement
 assignees: ''
 
