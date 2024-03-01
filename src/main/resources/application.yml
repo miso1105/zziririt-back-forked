@@ -24,6 +24,17 @@ logging:
         orm:
           jdbc:
             bind: trace
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY}
+      secretKey: ${AWS_S3_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_S3_REGION}
+    stack:
+      auto: false
 
 ---
 spring:
@@ -74,3 +85,14 @@ spring:
       ddl-auto: create
     open-in-view: false
     database-platform: org.hibernate.dialect.H2Dialect
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY}
+      secretKey: ${AWS_S3_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_S3_REGION}
+    stack:
+      auto: false
