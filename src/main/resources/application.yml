@@ -24,6 +24,17 @@ logging:
         orm:
           jdbc:
             bind: trace
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY}
+      secretKey: ${AWS_S3_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_S3_REGION}
+    stack:
+      auto: false
 
 ---
 spring:
@@ -89,20 +100,30 @@ spring:
             client-name: ${SPRING_TEST_NAVER_CLIENTNAME}
             authorization-grant-type: ${SPRING_TEST_NAVER_GRANTTYPE}
             redirect-uri: ${SPRING_TEST_NAVER_REDIRECT}
-
+            
         provider:
           naver:
             authorization-uri: ${SPRING_TEST_NAVER_AUTHORIZATION-URI}
             token-uri: ${SPRING_TEST_NAVER_TOKEN-URI}
             user-info-uri: ${SPRING_TEST_NAVER_USER-INFO-URI}
             user-name-attribute: ${SPRING_TEST_NAVER_USER-NAME-ATTRIBUTE}
-
+            
 auth:
   jwt:
     issuer: ${TEST_JWT_ISSUER}
     secret: ${TEST_JWT_SECRET}
     accessTokenExpirationHour: ${TEST_JWT_ACCESSTOKENEXP}
 
-
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY}
+      secretKey: ${AWS_S3_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_S3_REGION}
+    stack:
+      auto: false
 
 

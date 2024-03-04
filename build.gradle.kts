@@ -45,12 +45,14 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    //aws
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE")
     //log
     implementation("io.github.oshai:kotlin-logging-jvm:6.0.2")
     //.env
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
     runtimeOnly("com.h2database:h2")
-    runtimeOnly("org.postgresql:postgresql")
+//    runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
