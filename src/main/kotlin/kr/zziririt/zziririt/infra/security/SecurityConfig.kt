@@ -14,10 +14,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfig (
+class SecurityConfig(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     private val customOAuth2UserService: CustomOAuth2UserService,
-){
+) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http
@@ -29,13 +29,12 @@ class SecurityConfig (
                 it.sessionCreationPolicy(SessionCreationPolicy.NEVER)
             }
             .oauth2Login {
-                it.userInfoEndpoint { u -> u.userService (customOAuth2UserService)}
+                it.userInfoEndpoint { u -> u.userService(customOAuth2UserService) }
                 it.defaultSuccessUrl("/api/v1/oauth2/login")
                 it.failureUrl("/error")
             }
             .authorizeHttpRequests {
                 it.requestMatchers(
-                    "**",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                 )
