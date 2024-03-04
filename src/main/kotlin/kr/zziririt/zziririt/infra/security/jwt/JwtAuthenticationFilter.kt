@@ -11,12 +11,13 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-class JwtAuthenticationFilter (
-    private val jwtProvider : JwtProvider
-): OncePerRequestFilter() {
+class JwtAuthenticationFilter(
+    private val jwtProvider: JwtProvider
+) : OncePerRequestFilter() {
     companion object {
         private val BEARER_PATTERN = Regex("^Bearer (.+?)$")
     }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -27,15 +28,17 @@ class JwtAuthenticationFilter (
         if (jwt != null) {
             jwtProvider.validateToken(jwt)
                 .onSuccess {
-                    val userId = it.payload.subject.toLong()
+                    val id = it.payload["memberId"] as String
+                    val providerId = it.payload.subject
                     val role = it.payload["role"] as String
                     val email = it.payload["email"] as String
                     val principal = UserPrincipal(
-                        id = userId,
+                        memberId = id.toLong(),
                         email = email,
-                        roles = setOf(role)
+                        roles = setOf(role),
+                        providerId = providerId
                     )
-                    val authentication = JwtAuthenticationToken (
+                    val authentication = JwtAuthenticationToken(
                         principal = principal,
                         details = WebAuthenticationDetailsSource().buildDetails(request)
                     )

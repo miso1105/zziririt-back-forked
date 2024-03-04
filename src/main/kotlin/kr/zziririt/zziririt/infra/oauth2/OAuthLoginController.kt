@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/oauth2")
 class OAuthLoginController(
     private val authService: CustomOAuth2UserService
-){
+) {
     @GetMapping("/login")
-    fun login(@AuthenticationPrincipal oAuth2User: OAuth2User) : ResponseEntity<JwtDto> {
+    fun login(@AuthenticationPrincipal oAuth2User: OAuth2User): ResponseEntity<JwtDto> {
         return ResponseEntity.ok(authService.login(oAuth2User))
     }
 }
