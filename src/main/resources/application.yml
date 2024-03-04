@@ -63,6 +63,9 @@ spring:
     username: ${SPRING_TEST_DATASOURCE_USERNAME}
     password: ${SPRING_TEST_DATASOURCE_PASSWORD}
     driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
   jpa:
     properties:
       hibernate:
@@ -74,3 +77,32 @@ spring:
       ddl-auto: create
     open-in-view: false
     database-platform: org.hibernate.dialect.H2Dialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          naver:
+            client-id: ${SPRING_TEST_NAVER_CLIENTID}
+            client-secret: ${SPRING_TEST_NAVER_CLIENTSECRET}
+            scope: ${SPRING_TEST_NAVER_SCOPE}
+            client-name: ${SPRING_TEST_NAVER_CLIENTNAME}
+            authorization-grant-type: ${SPRING_TEST_NAVER_GRANTTYPE}
+            redirect-uri: ${SPRING_TEST_NAVER_REDIRECT}
+
+        provider:
+          naver:
+            authorization-uri: ${SPRING_TEST_NAVER_AUTHORIZATION-URI}
+            token-uri: ${SPRING_TEST_NAVER_TOKEN-URI}
+            user-info-uri: ${SPRING_TEST_NAVER_USER-INFO-URI}
+            user-name-attribute: ${SPRING_TEST_NAVER_USER-NAME-ATTRIBUTE}
+
+auth:
+  jwt:
+    issuer: ${TEST_JWT_ISSUER}
+    secret: ${TEST_JWT_SECRET}
+    accessTokenExpirationHour: ${TEST_JWT_ACCESSTOKENEXP}
+
+
+
+
