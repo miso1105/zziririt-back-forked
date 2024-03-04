@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SocialMemberRepository : CrudRepository<SocialMemberEntity, Long> {
+
+    fun findByEmail (email:String) : SocialMemberEntity?
+
 }
