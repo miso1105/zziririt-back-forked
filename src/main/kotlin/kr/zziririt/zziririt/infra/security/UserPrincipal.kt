@@ -4,12 +4,15 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 data class UserPrincipal(
-    val id: Long,
+    val memberId: Long,
     val email: String,
-    val authorities: Collection<GrantedAuthority>
+    val authorities: Collection<GrantedAuthority>,
+    val providerId: String
 ) {
-    constructor(id: Long, email: String, roles: Set<String>) : this(
-        id,
+    constructor(memberId: Long, email: String, roles: Set<String>, providerId: String) : this(
+        memberId,
         email,
-        roles.map { SimpleGrantedAuthority("ROLE_$it") })
+        roles.map { SimpleGrantedAuthority("ROLE_$it") },
+        providerId
+    )
 }
