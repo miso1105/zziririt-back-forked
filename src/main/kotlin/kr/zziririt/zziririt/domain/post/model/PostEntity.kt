@@ -52,7 +52,11 @@ class PostEntity(
 
     fun incrementHit() = this.hit++
 
-    fun togglePrivateStatus() = !this.privateStatus
+    fun togglePrivateStatus() {
+        this.privateStatus = !privateStatus
+    }
 
-    fun toggleBlindStatus() = !this.privateStatus
+    fun toggleBlindStatus() {
+        this.blindStatus = !blindStatus
+    }
 }
