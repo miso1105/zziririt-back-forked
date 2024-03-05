@@ -1,6 +1,6 @@
-package kr.zziririt.zziririt.domain.post.repository
+package kr.zziririt.zziririt.domain.board.repository
 
-import kr.zziririt.zziririt.domain.post.model.FavoriteBoardEntity
+import kr.zziririt.zziririt.domain.board.model.FavoriteBoardEntity
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 

@@ -4,8 +4,8 @@ import kr.zziririt.zziririt.api.post.dto.PostSearchCondition
 import kr.zziririt.zziririt.api.post.dto.request.CreatePostRequest
 import kr.zziririt.zziririt.api.post.dto.request.UpdatePostRequest
 import kr.zziririt.zziririt.api.post.dto.response.PostResponse
+import kr.zziririt.zziririt.domain.board.repository.BoardRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
-import kr.zziririt.zziririt.domain.post.repository.BoardRepository
 import kr.zziririt.zziririt.domain.post.repository.PostRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class PostService(
     private val postRepository: PostRepository,
     private val socialMemberRepository: SocialMemberRepository,
-    private val boardRepository: BoardRepository,
+    private val boardRepository: BoardRepository
 ) {
     @Transactional
     fun createPost(

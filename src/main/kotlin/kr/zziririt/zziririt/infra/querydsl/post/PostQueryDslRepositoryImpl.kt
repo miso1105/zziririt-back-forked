@@ -2,8 +2,8 @@ package kr.zziririt.zziririt.infra.querydsl.post
 
 import com.querydsl.core.types.dsl.BooleanExpression
 import kr.zziririt.zziririt.api.post.dto.PostSearchCondition
+import kr.zziririt.zziririt.domain.board.model.QBoardEntity
 import kr.zziririt.zziririt.domain.member.model.QSocialMemberEntity
-import kr.zziririt.zziririt.domain.post.model.QBoardEntity
 import kr.zziririt.zziririt.domain.post.model.QPostEntity
 import kr.zziririt.zziririt.infra.querydsl.QueryDslSupport
 import kr.zziririt.zziririt.infra.querydsl.post.dto.PostRowDto
