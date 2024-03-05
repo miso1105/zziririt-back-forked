@@ -45,9 +45,7 @@ class JwtAuthenticationFilter(
                     SecurityContextHolder.getContext().authentication = authentication
                 }
         }
-
         filterChain.doFilter(request, response)
-
     }
 
     private fun HttpServletRequest.getBearerToken(): String? {
