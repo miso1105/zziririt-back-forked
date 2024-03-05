@@ -1,9 +1,16 @@
 package kr.zziririt.zziririt.domain.post.repository
 
+import kr.zziririt.zziririt.api.post.dto.PostSearchCondition
 import kr.zziririt.zziririt.domain.post.model.PostEntity
-import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
+import kr.zziririt.zziririt.infra.querydsl.post.dto.PostRowDto
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 
-@Repository
-interface PostRepository : CrudRepository<PostEntity, Long> {
+interface PostRepository {
+    fun findByIdOrNull(id: Long): PostEntity?
+    fun save(entity: PostEntity): PostEntity
+    fun delete(entity: PostEntity)
+    fun findAll(): List<PostEntity>
+    fun findAllById(idList: List<Long>): List<PostEntity>
+    fun searchByWhere(condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto>
 }

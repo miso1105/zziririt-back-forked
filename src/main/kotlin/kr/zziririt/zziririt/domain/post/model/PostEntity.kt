@@ -5,7 +5,6 @@ import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import kr.zziririt.zziririt.global.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
-import java.awt.Image
 
 @Entity
 @Table(name = "post")
@@ -28,17 +27,20 @@ class PostEntity(
 
     @Column(name = "private_status", nullable = false)
     var privateStatus: Boolean = false,
-
-    @Column(name = "zzirit_count", nullable = false)
-    var zziritCount: Long = 0L,
-
-    @Column(name = "hit_count", nullable = false)
-    var hitCount: Long = 0L,
 ) : BaseEntity() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    @Column(name = "blind_status", nullable = false)
+    var blindStatus: Boolean = false
+
+    @Column(name = "zzirit_count", nullable = false)
+    var zziritCount: Long = 0L
+
+    @Column(name = "hit", nullable = false)
+    var hit: Long = 0L
 
     fun update(title: String, content: String) {
         this.title = title
@@ -47,7 +49,9 @@ class PostEntity(
 
     fun incrementZzirit() = this.zziritCount++
 
-    fun incrementHit() = this.hitCount++
+    fun incrementHit() = this.hit++
 
     fun togglePrivateStatus() = !this.privateStatus
+
+    fun toggleBlindStatus() = !this.privateStatus
 }
