@@ -50,7 +50,7 @@ spring:
   datasource:
     url: ${SPRING_TEST_DATASOURCE_URL}
     username: ${SPRING_TEST_DATASOURCE_USERNAME}
-    password: ${SPRING_TEST_DATASOURCE_PASSWORD}
+    password:
   h2:
     console:
       enabled: true
@@ -86,10 +86,10 @@ spring:
 
         provider:
           naver:
-            authorization-uri: ${SPRING_NAVER_AUTHORIZATION-URI}
-            token-uri: ${SPRING_NAVER_TOKEN-URI}
-            user-info-uri: ${SPRING_NAVER_USER-INFO-URI}
-            user-name-attribute: ${SPRING_NAVER_USER-NAME-ATTRIBUTE}
+            authorization-uri: ${SPRING_NAVER_AUTHORIZATION_URI}
+            token-uri: ${SPRING_NAVER_TOKEN_URI}
+            user-info-uri: ${SPRING_NAVER_USER_INFO_URI}
+            user-name-attribute: ${SPRING_NAVER_USER_NAME_ATTRIBUTE}
 
 auth:
   jwt:
