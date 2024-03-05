@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.api.member.controller
 
 import jakarta.validation.Valid
 import kr.zziririt.zziririt.api.member.dto.request.AdjustRoleRequest
+import kr.zziririt.zziririt.api.member.dto.request.SetBoardManagerRequest
 import kr.zziririt.zziririt.api.member.service.MemberService
 import kr.zziririt.zziririt.global.responseEntity
 import kr.zziririt.zziririt.infra.security.UserPrincipal
@@ -27,16 +28,16 @@ class MemberController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ) = responseEntity(HttpStatus.OK) { memberService.adjustRole(memberId, request, userPrincipal) }
 
-    @PatchMapping("/streamer/delegate")
+    @PostMapping("/streamer/delegate")
     fun delegateBoardManager(
-        memberId: Long,
+        @Valid @RequestBody request: SetBoardManagerRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ) = responseEntity(HttpStatus.OK) { memberService.delegateBoardManager(memberId, userPrincipal) }
+    ) = responseEntity(HttpStatus.OK) { memberService.delegateBoardManager(request, userPrincipal) }
 
-    @PatchMapping("/streamer/dismiss")
+    @PostMapping("/streamer/dismiss")
     fun dismissBoardManager(
-        memberId: Long,
+        @Valid @RequestBody request: SetBoardManagerRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ) = responseEntity(HttpStatus.OK) { memberService.dismissBoardManager(memberId, userPrincipal) }
+    ) = responseEntity(HttpStatus.OK) { memberService.dismissBoardManager(request, userPrincipal) }
 
 }
