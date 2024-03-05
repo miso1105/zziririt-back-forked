@@ -19,8 +19,7 @@ class BoardController(
 ) {
     @PostMapping
     fun createBoard(
-        @Valid
-        @RequestBody boardDto: BoardDto,
+        @Valid @RequestBody boardDto: BoardDto,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         boardService.createBoard(boardDto, userPrincipal)
@@ -29,9 +28,8 @@ class BoardController(
 
     @PostMapping("/{boardId}")
     fun createStreamerBoard(
-        @Valid
         @PathVariable boardId: Long,
-        @RequestBody boardDto: BoardDto,
+        @Valid @RequestBody boardDto: BoardDto,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         boardService.createChildBoard(boardId, boardDto, userPrincipal)
@@ -40,9 +38,8 @@ class BoardController(
 
     @PatchMapping("/{boardId}")
     fun updateBoard(
-        @Valid
         @PathVariable boardId: Long,
-        @RequestBody boardDto: BoardDto,
+        @Valid @RequestBody boardDto: BoardDto,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         boardService.updateBoard(boardId, boardDto, userPrincipal)
@@ -60,8 +57,7 @@ class BoardController(
 
     @PostMapping("/favorites")
     fun createFavoriteBoard(
-        @Valid
-        @RequestBody favoriteBoardDto: FavoriteBoardDto,
+        @Valid @RequestBody favoriteBoardDto: FavoriteBoardDto,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         boardService.createFavoriteBoard(favoriteBoardDto, userPrincipal)

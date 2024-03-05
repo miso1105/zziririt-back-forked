@@ -1,7 +1,8 @@
-package kr.zziririt.zziririt.domain.post.model
+package kr.zziririt.zziririt.domain.comment.model
 
 import jakarta.persistence.*
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
+import kr.zziririt.zziririt.domain.post.model.PostEntity
 import kr.zziririt.zziririt.global.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
@@ -12,7 +13,7 @@ import org.hibernate.annotations.SQLRestriction
 @SQLRestriction(value = "is_deleted = false")
 class CommentEntity(
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     var post: PostEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,5 +40,7 @@ class CommentEntity(
 
     fun incrementZzirit() = this.zziritCount++
 
-    fun togglePrivateStatus() = !this.privateStatus
+    fun togglePrivateStatus() {
+        this.privateStatus = !privateStatus
+    }
 }
