@@ -7,6 +7,7 @@ import kr.zziririt.zziririt.api.member.service.MemberService
 import kr.zziririt.zziririt.global.responseEntity
 import kr.zziririt.zziririt.infra.security.UserPrincipal
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -21,7 +22,9 @@ class MemberController(
         @AuthenticationPrincipal principal: UserPrincipal
     ) = responseEntity(HttpStatus.OK) { memberService.getMember(principal) }
 
+
     @PatchMapping("/{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     fun adjustRole(
         @PathVariable memberId: Long,
         @Valid @RequestBody request: AdjustRoleRequest,
@@ -29,12 +32,14 @@ class MemberController(
     ) = responseEntity(HttpStatus.OK) { memberService.adjustRole(memberId, request, userPrincipal) }
 
     @PostMapping("/streamer/delegate")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STREAMER')")
     fun delegateBoardManager(
         @Valid @RequestBody request: SetBoardManagerRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ) = responseEntity(HttpStatus.OK) { memberService.delegateBoardManager(request, userPrincipal) }
 
     @PostMapping("/streamer/dismiss")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STREAMER')")
     fun dismissBoardManager(
         @Valid @RequestBody request: SetBoardManagerRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal

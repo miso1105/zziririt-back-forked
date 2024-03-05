@@ -15,4 +15,5 @@ enum class ErrorCode(
     MODEL_NOT_FOUND(9002, HttpStatus.BAD_REQUEST, "해당 Model을 찾지 못했습니다."),
     INVALID_TOKEN(9003, HttpStatus.UNAUTHORIZED, "JWT 검증에 실패하였습니다."),
     DUPLICATE_MODEL_NAME(9004, HttpStatus.BAD_REQUEST, "이미 존재하는 Model의 이름입니다."),
+    DUPLICATE_ROLE(9005, HttpStatus.BAD_REQUEST, "동일한 등급으로 변경할 수 없습니다.")
 }

@@ -55,4 +55,12 @@ class SocialMemberEntity(
         return now.isAfter(bannedStartDate) && now.isBefore(bannedEndDate)
     }
 
+    fun toBoardManager() {
+        this.memberRole = MemberRole.BOARD_MANAGER
+    }
+
+    fun toViewer() {
+        this.memberRole = MemberRole.VIEWER
+    }
+
 }
