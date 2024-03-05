@@ -23,7 +23,6 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
             .select(
                 QPostRowDto(
                     post.id.`as`("postId"),
-                    post.board.categoryEntity.categoryName,
                     post.title,
                     post.socialMember.id.`as`("memberId"),
                     post.socialMember.nickname,

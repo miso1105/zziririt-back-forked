@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 
 data class PostRowDto @QueryProjection constructor(
     val postId: Long,
-    val category: String,
     val title: String,
     val memberId: Long,
     val nickname: String,
