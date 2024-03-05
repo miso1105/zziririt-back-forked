@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.api.faq.controller
 
 import kr.zziririt.zziririt.api.faq.dto.CreateFaqRequest
 import kr.zziririt.zziririt.api.faq.dto.FaqResponse
+import kr.zziririt.zziririt.api.faq.dto.UpdateFaqRequest
 import kr.zziririt.zziririt.api.faq.service.FaqService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,5 +21,15 @@ class FaqController(
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(faqService.createFaq(createFaqRequest))
+    }
+
+    @PutMapping("/{faqId}")
+    fun updateFaq(
+        @PathVariable faqId: Long,
+        @RequestBody updateFaqRequest: UpdateFaqRequest
+    ): ResponseEntity<FaqResponse> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(faqService.updateFaq(faqId, updateFaqRequest))
     }
 }
