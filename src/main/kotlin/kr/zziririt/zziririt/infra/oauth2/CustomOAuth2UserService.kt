@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.infra.oauth2
 
 import jakarta.transaction.Transactional
 import kr.zziririt.zziririt.domain.member.model.MemberRole
+import kr.zziririt.zziririt.domain.member.model.MemberStatus
 import kr.zziririt.zziririt.domain.member.model.OAuth2Provider
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
@@ -42,7 +43,10 @@ class CustomOAuth2UserService(
                     nickname = getAttribute("nickname", oAuth2User)!!,
                     providerId = getAttribute("id", oAuth2User)!!,
                     provider = OAuth2Provider.NAVER,
-                    memberRole = MemberRole.VIEWER
+                    memberRole = MemberRole.VIEWER,
+                    memberStatus = MemberStatus.NORMAL,
+                    bannedStartDate = null,
+                    bannedEndDate = null,
                 )
             )
         }
