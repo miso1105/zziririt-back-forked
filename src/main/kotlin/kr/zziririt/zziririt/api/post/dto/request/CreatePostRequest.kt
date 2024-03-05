@@ -1,8 +1,8 @@
 package kr.zziririt.zziririt.api.post.dto.request
 
 import jakarta.validation.constraints.Size
+import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
-import kr.zziririt.zziririt.domain.post.model.BoardEntity
 import kr.zziririt.zziririt.domain.post.model.PostEntity
 import org.springframework.validation.annotation.Validated
 

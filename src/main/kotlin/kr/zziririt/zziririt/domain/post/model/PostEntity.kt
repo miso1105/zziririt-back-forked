@@ -1,6 +1,7 @@
 package kr.zziririt.zziririt.domain.post.model
 
 import jakarta.persistence.*
+import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import kr.zziririt.zziririt.global.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
