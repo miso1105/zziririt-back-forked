@@ -29,12 +29,10 @@ class SocialMemberEntity(
     var memberStatus: MemberStatus = MemberStatus.NORMAL,
 
     @Column(name = "banned_start_date", nullable = true)
-    var bannedStartDate: LocalDateTime?,
+    var bannedStartDate: LocalDateTime? = null,
 
     @Column(name = "banned_end_date", nullable = true)
-    var bannedEndDate: LocalDateTime?,
-
-
+    var bannedEndDate: LocalDateTime? = null,
     ) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +48,6 @@ class SocialMemberEntity(
         if (memberStatus != MemberStatus.BANNED) {
             return false
         }
-
         val now = LocalDateTime.now()
         return now.isAfter(bannedStartDate) && now.isBefore(bannedEndDate)
     }
