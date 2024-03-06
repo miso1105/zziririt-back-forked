@@ -8,7 +8,7 @@ import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 
 
 class BoardEntityTest: FeatureSpec ({
-    val socialMember = SocialMemberEntity(email = "parkbro95@naver.com", nickname = "두주", provider = OAuth2Provider.NAVER, providerId = "dpUMgQQIWSw5QL3ExCfTOEPoimd239", memberRole = MemberRole.VIEWER, memberStatus = MemberStatus.NORMAL, bannedStartDate = null, bannedEndDate = null)
+    val socialMember = SocialMemberEntity(email = "parkbro95@naver.com", nickname = "두주", provider = OAuth2Provider.NAVER, providerId = "dpUMgQQIWSw5QL3ExCfTOEPoimd239", memberRole = MemberRole.VIEWER, memberStatus = MemberStatus.NORMAL)
     val boardFixture = BoardEntity(parent = null, socialMember = socialMember, boardName = "test boardName")
 
     feature("Board Entity update 메서드를 실행한다.") {

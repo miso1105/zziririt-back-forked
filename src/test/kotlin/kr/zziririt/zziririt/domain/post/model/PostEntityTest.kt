@@ -9,7 +9,7 @@ import kr.zziririt.zziririt.domain.member.model.OAuth2Provider
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 
 class PostEntityTest : FeatureSpec({
-    val socialMember = SocialMemberEntity("email", "nickname", OAuth2Provider.TEST, "providerId", MemberRole.VIEWER, MemberStatus.NORMAL, null, null)
+    val socialMember = SocialMemberEntity("email", "nickname", OAuth2Provider.TEST, "providerId", MemberRole.VIEWER, MemberStatus.NORMAL)
     val board = BoardEntity(socialMember = socialMember, boardName = "자유 게시판")
     val postFixture = PostEntity(board, socialMember, "title", "content")
 
