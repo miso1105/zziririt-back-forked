@@ -33,7 +33,7 @@ class FaqController(
             .body(faqService.updateFaq(faqId, updateFaqRequest))
     }
 
-    @DeleteMapping("{faqId}")
+    @DeleteMapping("/{faqId}")
     fun deleteFaq(@PathVariable faqId: Long): ResponseEntity<Unit> {
         faqService.deleteFaq(faqId)
         return ResponseEntity
