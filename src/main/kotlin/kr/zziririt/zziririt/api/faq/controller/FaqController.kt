@@ -32,4 +32,12 @@ class FaqController(
             .status(HttpStatus.OK)
             .body(faqService.updateFaq(faqId, updateFaqRequest))
     }
+
+    @DeleteMapping("{faqId}")
+    fun deleteFaq(@PathVariable faqId: Long): ResponseEntity<Unit> {
+        faqService.deleteFaq(faqId)
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .build()
+    }
 }

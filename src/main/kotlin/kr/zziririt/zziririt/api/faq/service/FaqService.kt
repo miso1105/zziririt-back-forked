@@ -31,4 +31,12 @@ class FaqService(
         val updatedFaqEntity = faqRepository.save(faqEntity)
         return FaqResponse.from(updatedFaqEntity)
     }
+
+    @Transactional
+    fun deleteFaq(faqId: Long) {
+        val faqToDelete = faqRepository.findByIdOrNull(faqId)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        faqRepository.delete(faqToDelete)
+    }
+
 }
