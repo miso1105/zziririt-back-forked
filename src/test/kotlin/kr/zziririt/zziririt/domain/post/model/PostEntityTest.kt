@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.domain.post.model
 
 import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
+import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.model.OAuth2Provider
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
