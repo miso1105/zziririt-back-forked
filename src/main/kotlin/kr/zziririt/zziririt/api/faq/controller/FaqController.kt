@@ -40,4 +40,11 @@ class FaqController(
             .status(HttpStatus.NO_CONTENT)
             .build()
     }
+
+    @GetMapping
+    fun getFaqs(): ResponseEntity<List<FaqResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(faqService.getFaqs())
+    }
 }

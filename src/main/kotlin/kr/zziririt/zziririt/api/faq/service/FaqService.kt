@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import kr.zziririt.zziririt.api.faq.dto.CreateFaqRequest
 import kr.zziririt.zziririt.api.faq.dto.FaqResponse
 import kr.zziririt.zziririt.api.faq.dto.UpdateFaqRequest
+import kr.zziririt.zziririt.domain.faq.model.FaqEntity
 import kr.zziririt.zziririt.domain.faq.repository.FaqRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
@@ -39,4 +40,11 @@ class FaqService(
         faqRepository.delete(faqToDelete)
     }
 
+    fun getFaqs(): List<FaqResponse> {
+        val faqEntities: List<FaqEntity> = faqRepository.findAll()
+        if (faqEntities.isEmpty()) {
+            throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        }
+        return faqEntities.map { FaqResponse.from(it) }
+    }
 }
