@@ -11,13 +11,12 @@ import java.util.*
 class MemberAwareAudit : AuditorAware<Long> {
 
     override fun getCurrentAuditor(): Optional<Long> {
-        // Spring Security를 통한 Auditor 매핑
-        val authentication: Authentication? = SecurityContextHolder.getContext().authentication
-        if (authentication == null || !authentication.isAuthenticated) {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        if (authentication.authorities.any { it.authority == "OAUTH2_USER" }) {
             return Optional.empty()
         }
 
-        return Optional.of((authentication.principal as UserPrincipal).id)
+        return Optional.of((authentication.principal as UserPrincipal).memberId)
     }
 
 }
