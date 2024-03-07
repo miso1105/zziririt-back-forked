@@ -44,9 +44,7 @@ class CustomOAuth2UserService(
                     providerId = getAttribute("id", oAuth2User)!!,
                     provider = OAuth2Provider.NAVER,
                     memberRole = MemberRole.VIEWER,
-                    memberStatus = MemberStatus.NORMAL,
-                    bannedStartDate = null,
-                    bannedEndDate = null,
+                    memberStatus = MemberStatus.NORMAL
                 )
             )
         }
