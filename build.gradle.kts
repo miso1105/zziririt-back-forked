@@ -39,11 +39,25 @@ repositories {
     mavenCentral()
 }
 
+val swaggerVersion = "2.2.0"
+
 val caffeineVersion = "3.1.8"
 
 val queryDslVersion = "5.0.0"
 
+val springCloudStarterAwsVersion = "2.0.1.RELEASE"
+
+val kotlinLoggerVersion = "6.0.2"
+
+val dotEnvVersion = "4.0.0"
+
+val jjwtVersion = "0.12.3"
+
+val testH2Version = "2.2.220"
+
 val kotestVersion = "5.5.5"
+
+val kotestExtensionVersion = "1.1.3"
 
 val mockkVersion = "1.13.8"
 
@@ -51,7 +65,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$swaggerVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.h2database:h2")
@@ -68,26 +82,26 @@ dependencies {
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
     //aws
-    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:$springCloudStarterAwsVersion")
     //log
-    implementation("io.github.oshai:kotlin-logging-jvm:6.0.2")
+    implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggerVersion")
     //.env
-    implementation("me.paulschwarz:spring-dotenv:4.0.0")
+    implementation("me.paulschwarz:spring-dotenv:$dotEnvVersion")
     //jwt
-    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-api:$jjwtVersion")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
     //security
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
     //test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("com.h2database:h2:2.2.220")
+    testImplementation("com.h2database:h2:$testH2Version")
     //kotest
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:$kotestExtensionVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 

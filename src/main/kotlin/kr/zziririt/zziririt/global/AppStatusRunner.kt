@@ -16,6 +16,8 @@ class AppStatusRunner(private val environment: Environment) : ApplicationRunner 
         kLogger.info { "Datasource url : ${environment.getProperty("spring.datasource.url")}" }
         kLogger.info { "Datasource username : ${environment.getProperty("spring.datasource.username")}" }
         kLogger.info { "Datasource password : ${environment.getProperty("spring.datasource.password")}" }
+        kLogger.info { "Redis Host : ${environment.getProperty("spring.data.redis.host")}" }
+        kLogger.info { "Redis Port : ${environment.getProperty("spring.data.redis.port")}" }
         kLogger.info { "Server Port : ${environment.getProperty("server.port")}" }
         kLogger.info { "Default Property : ${environment.getProperty("default.string")}" }
         kLogger.info { "Common Property : ${environment.getProperty("common.string")}" }

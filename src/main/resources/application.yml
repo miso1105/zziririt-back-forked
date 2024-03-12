@@ -88,19 +88,19 @@ spring:
       client:
         registration:
           naver:
-            client-id: ${SPRING_NAVER_CLIENTID}
-            client-secret: ${SPRING_NAVER_CLIENTSECRET}
-            scope: ${SPRING_NAVER_SCOPE}
-            client-name: ${SPRING_NAVER_CLIENTNAME}
-            authorization-grant-type: ${SPRING_NAVER_GRANTTYPE}
-            redirect-uri: ${SPRING_NAVER_REDIRECT}
+            client-id: ${OAUTH_NAVER_CLIENTID}
+            client-secret: ${OAUTH_NAVER_CLIENTSECRET}
+            scope: ${OAUTH_NAVER_SCOPE}
+            client-name: ${OAUTH_NAVER_CLIENTNAME}
+            authorization-grant-type: ${OAUTH_NAVER_GRANTTYPE}
+            redirect-uri: ${OAUTH_NAVER_REDIRECT}
 
         provider:
           naver:
-            authorization-uri: ${SPRING_NAVER_AUTHORIZATION_URI}
-            token-uri: ${SPRING_NAVER_TOKEN_URI}
-            user-info-uri: ${SPRING_NAVER_USER_INFO_URI}
-            user-name-attribute: ${SPRING_NAVER_USER_NAME_ATTRIBUTE}
+            authorization-uri: ${OAUTH_NAVER_AUTHORIZATION_URI}
+            token-uri: ${OAUTH_NAVER_TOKEN_URI}
+            user-info-uri: ${OAUTH_NAVER_USER_INFO_URI}
+            user-name-attribute: ${OAUTH_NAVER_USER_NAME_ATTRIBUTE}
 
 auth:
   jwt:
