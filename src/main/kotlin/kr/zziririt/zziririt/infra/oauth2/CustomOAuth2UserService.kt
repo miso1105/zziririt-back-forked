@@ -1,10 +1,9 @@
 package kr.zziririt.zziririt.infra.oauth2
 
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.transaction.Transactional
-import kr.zziririt.zziririt.domain.member.model.MemberRole
-import kr.zziririt.zziririt.domain.member.model.MemberStatus
-import kr.zziririt.zziririt.domain.member.model.OAuth2Provider
-import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
+import kr.zziririt.zziririt.domain.member.model.*
+import kr.zziririt.zziririt.domain.member.repository.LoginHistoryRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.infra.security.jwt.JwtDto
 import kr.zziririt.zziririt.infra.security.jwt.JwtProvider
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class CustomOAuth2UserService(
     private val socialMemberRepository: SocialMemberRepository,
+    private val loginHistoryRepository: LoginHistoryRepository,
     private val jwtProvider: JwtProvider
 ) : DefaultOAuth2UserService() {
 
@@ -33,7 +33,7 @@ class CustomOAuth2UserService(
     }
 
     @Transactional
-    fun login(oAuth2User: OAuth2User): JwtDto {
+    fun login(oAuth2User: OAuth2User, request: HttpServletRequest): JwtDto {
         val email = getAttribute("email", oAuth2User)!!
         var user = socialMemberRepository.findByEmail(email)
         if (user == null) {
@@ -48,7 +48,8 @@ class CustomOAuth2UserService(
                 )
             )
         }
-        return JwtDto(
+
+        val jwtDto = JwtDto(
             jwtProvider.generateAccessToken(
                 id = user.id.toString(),
                 subject = user.providerId,
@@ -56,5 +57,16 @@ class CustomOAuth2UserService(
                 role = user.memberRole.name
             )
         )
+
+        val loginHistory = LoginHistoryEntity(
+            ip = request.remoteAddr,
+            userEnvironment = request.getHeader("User-Agent"),
+            memberId = user,
+        )
+
+        loginHistoryRepository.save(loginHistory)
+
+        return jwtDto
+
     }
 }

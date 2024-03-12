@@ -5,6 +5,7 @@ import kr.zziririt.zziririt.api.member.dto.request.AdjustRoleRequest
 import kr.zziririt.zziririt.api.member.dto.request.SetBoardManagerRequest
 import kr.zziririt.zziririt.api.member.dto.response.GetMemberResponse
 import kr.zziririt.zziririt.domain.member.model.MemberRole
+import kr.zziririt.zziririt.domain.member.repository.LoginHistoryRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
@@ -15,18 +16,23 @@ import org.springframework.stereotype.Service
 
 @Service
 class MemberService(
-    private val memberRepository: SocialMemberRepository
+    private val memberRepository: SocialMemberRepository,
+    private val loginHistoryRepository: LoginHistoryRepository
 ) {
 
     fun getMember(userPrincipal: UserPrincipal): GetMemberResponse {
-        val memberCheck = memberRepository.findByIdOrNull(userPrincipal.memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        val memberCheck = memberRepository.findByIdOrNull(userPrincipal.memberId) ?: throw ModelNotFoundException(
+            ErrorCode.MODEL_NOT_FOUND
+        )
+        val loginCheck = loginHistoryRepository.findTopByMemberIdOrderByCreatedAtDesc(memberCheck)
 
-        return GetMemberResponse.from(memberCheck)
+        return GetMemberResponse.from(memberCheck, loginCheck)
     }
 
     @Transactional
     fun adjustRole(memberId: Long, request: AdjustRoleRequest, userPrincipal: UserPrincipal) {
-        val memberCheck = memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        val memberCheck =
+            memberRepository.findByIdOrNull(memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         check(memberCheck.memberRole != request.memberRole) {
             throw RestApiException(ErrorCode.DUPLICATE_ROLE)
@@ -37,7 +43,8 @@ class MemberService(
 
     @Transactional
     fun delegateBoardManager(request: SetBoardManagerRequest, userPrincipal: UserPrincipal) {
-        val boardManagerCheck = memberRepository.findByIdOrNull(request.memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        val boardManagerCheck =
+            memberRepository.findByIdOrNull(request.memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         check(boardManagerCheck.memberRole != MemberRole.BOARD_MANAGER) {
             throw RestApiException(ErrorCode.DUPLICATE_ROLE)
@@ -48,7 +55,8 @@ class MemberService(
 
     @Transactional
     fun dismissBoardManager(request: SetBoardManagerRequest, userPrincipal: UserPrincipal) {
-        val boardManagerCheck = memberRepository.findByIdOrNull(request.memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        val boardManagerCheck =
+            memberRepository.findByIdOrNull(request.memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         check(boardManagerCheck.memberRole == MemberRole.BOARD_MANAGER) {
             throw RestApiException(ErrorCode.DUPLICATE_ROLE)

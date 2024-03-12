@@ -1,5 +1,6 @@
 package kr.zziririt.zziririt.infra.oauth2
 
+import jakarta.servlet.http.HttpServletRequest
 import kr.zziririt.zziririt.infra.security.jwt.JwtDto
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -14,7 +15,10 @@ class OAuthLoginController(
     private val authService: CustomOAuth2UserService
 ) {
     @GetMapping("/login")
-    fun login(@AuthenticationPrincipal oAuth2User: OAuth2User): ResponseEntity<JwtDto> {
-        return ResponseEntity.ok(authService.login(oAuth2User))
+    fun login(
+        @AuthenticationPrincipal oAuth2User: OAuth2User,
+        request: HttpServletRequest
+    ): ResponseEntity<JwtDto> {
+        return ResponseEntity.ok(authService.login(oAuth2User, request))
     }
 }
