@@ -11,6 +11,7 @@ import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
 import kr.zziririt.zziririt.infra.querydsl.post.dto.PostRowDto
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
@@ -44,7 +45,7 @@ class PostService(
             }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun getPost(postId: Long): PostResponse {
         val findPost = postRepository.findByIdOrNull(postId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
@@ -54,11 +55,41 @@ class PostService(
         return PostResponse.from(findPost)
     }
 
+    @Transactional(readOnly = true)
     fun getPosts(condition: PostSearchCondition): PageImpl<PostRowDto> {
         return postRepository.searchByWhere(
             condition,
             PageRequest.of(condition.page.toInt() - 1, condition.size.toInt())
         )
+    }
+
+    @Transactional
+    @Cacheable(
+        cacheNames = ["POST_SEARCH"],
+        keyGenerator = "PostSearchKeyGenerator",
+        cacheManager = "caffeineCacheManager"
+    )
+    fun getPostsWithCache(condition: PostSearchCondition): PageImpl<PostRowDto> {
+        return postRepository.searchByWhere(
+            condition,
+            PageRequest.of(condition.page.toInt() - 1, condition.size.toInt())
+        ).onEach { postRepository.saveSearchPostCacheKeyByPostId(it.postId, condition.makePostSearchCacheKey()) }
+    }
+
+    @Transactional
+    @Cacheable(
+        cacheNames = ["POST_SEARCH"],
+        keyGenerator = "PostSearchKeyGenerator",
+        cacheManager = "redisCacheManager"
+    )
+    fun getPostsWithRedisCache(condition: PostSearchCondition): PageImpl<PostRowDto> {
+        val searchByWhere = postRepository.searchByWhere(
+            condition,
+            PageRequest.of(condition.page.toInt() - 1, condition.size.toInt())
+        )
+        searchByWhere.forEach { postRepository.saveSearchPostCacheKeyByPostId(it.postId, condition.makePostSearchCacheKey()) }
+
+        return searchByWhere
     }
 
     @Transactional
@@ -71,11 +102,13 @@ class PostService(
 
         check(authenticatedMemberId == findPost.socialMember.id) { throw RestApiException(ErrorCode.UNAUTHORIZED) }
 
+        postRepository.clearAllSearchPostCacheRelatedToPostId(postId)
+
         findPost.update(
             title = updatePostRequest.title,
             content = updatePostRequest.content
         )
-        check (updatePostRequest.privateStatus == findPost.privateStatus) {findPost.togglePrivateStatus()}
+        check(updatePostRequest.privateStatus == findPost.privateStatus) { findPost.togglePrivateStatus() }
     }
 
     @Transactional
@@ -86,6 +119,8 @@ class PostService(
         val findPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         check(authenticatedMemberId == findPost.socialMember.id) { throw RestApiException(ErrorCode.UNAUTHORIZED) }
+
+        postRepository.clearAllSearchPostCacheRelatedToPostId(postId)
 
         postRepository.delete(findPost)
     }

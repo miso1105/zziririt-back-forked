@@ -39,6 +39,8 @@ repositories {
     mavenCentral()
 }
 
+val caffeineVersion = "3.1.8"
+
 val queryDslVersion = "5.0.0"
 
 val kotestVersion = "5.5.5"
@@ -55,6 +57,13 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    //cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    //caffeine
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
+    //redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     //querydsl
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")

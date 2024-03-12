@@ -36,8 +36,7 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
             .where(
                 when (condition.searchType) {
                     "TITLECONT" -> {
-                        titleLike(condition.searchTerm)
-                        contentLike(condition.searchTerm)
+                        titleLikeOrContentLike(condition.searchTerm)
                     }
 
                     "NICKNAME" -> {
@@ -58,8 +57,7 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
             .where(
                 when (condition.searchType) {
                     "TITLECONT" -> {
-                        titleLike(condition.searchTerm)
-                        contentLike(condition.searchTerm)
+                        titleLikeOrContentLike(condition.searchTerm)
                     }
 
                     "NICKNAME" -> {
@@ -76,12 +74,16 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
         return PageImpl(content, pageable, count)
     }
 
-    private fun titleLike(title: String?): BooleanExpression? {
-        return if (StringUtils.hasText(title)) post.title.containsIgnoreCase(title) else null
+    private fun titleLike(searchTerm: String?): BooleanExpression? {
+        return if (StringUtils.hasText(searchTerm)) post.title.containsIgnoreCase(searchTerm) else null
     }
 
-    private fun contentLike(content: String?): BooleanExpression? {
-        return if (StringUtils.hasText(content)) post.content.containsIgnoreCase(content) else null
+    private fun contentLike(searchTerm: String?): BooleanExpression? {
+        return if (StringUtils.hasText(searchTerm)) post.content.containsIgnoreCase(searchTerm) else null
+    }
+
+    private fun titleLikeOrContentLike(searchTerm: String?): BooleanExpression? {
+        return if (StringUtils.hasText(searchTerm)) post.title.containsIgnoreCase(searchTerm).or(post.content.containsIgnoreCase(searchTerm)) else null
     }
 
     private fun nicknameLike(nickname: String?): BooleanExpression? {

@@ -1,6 +1,7 @@
 package kr.zziririt.zziririt.infra.querydsl.post.dto
 
 import com.querydsl.core.annotations.QueryProjection
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class PostRowDto @QueryProjection constructor(
@@ -10,4 +11,4 @@ data class PostRowDto @QueryProjection constructor(
     val nickname: String,
     val hit: Long,
     val createdAt: LocalDateTime
-)
+): Serializable

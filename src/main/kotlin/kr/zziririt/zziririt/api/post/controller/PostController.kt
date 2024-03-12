@@ -14,28 +14,38 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/boards/{boardId}/posts")
+@RequestMapping("/api")
 class PostController(
     private val postService: PostService
 ) {
-    @PostMapping
+    @PostMapping("/v1/boards/{boardId}/posts")
     fun createPost(
         @PathVariable boardId: Long,
         @Valid @RequestBody createPostRequest: CreatePostRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ) = responseEntity(HttpStatus.OK) { postService.createPost(boardId, createPostRequest, userPrincipal.memberId) }
 
-    @GetMapping("/{postId}")
+    @GetMapping("/v1/boards/{boardId}/posts/{postId}")
     fun getPost(
         @PathVariable postId: Long,
     ) = responseEntity(HttpStatus.OK) { postService.getPost(postId) }
 
-    @GetMapping
+    @GetMapping("/v1/boards/{boardId}/posts")
     fun getPosts(
         @Valid condition: PostSearchCondition
     ) = responseEntity(HttpStatus.OK) { postService.getPosts(condition) }
 
-    @PutMapping("/{postId}")
+    @GetMapping("/v2/boards/{boardId}/posts")
+    fun getPostsWithCache(
+        @Valid condition: PostSearchCondition
+    ) = responseEntity(HttpStatus.OK) { postService.getPostsWithCache(condition) }
+
+    @GetMapping("/v3/boards/{boardId}/posts")
+    fun getPostsWithRedisCache(
+        @Valid condition: PostSearchCondition
+    ) = responseEntity(HttpStatus.OK) { postService.getPostsWithRedisCache(condition) }
+
+    @PutMapping("/v1/boards/{boardId}/posts/{postId}")
     fun updatePost(
         @PathVariable postId: Long,
         @Valid @RequestBody updatePostRequest: UpdatePostRequest,
@@ -45,7 +55,7 @@ class PostController(
         return responseEntity(HttpStatus.OK)
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/v1/boards/{boardId}/posts/{postId}")
     fun deletePost(
         @PathVariable postId: Long,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
