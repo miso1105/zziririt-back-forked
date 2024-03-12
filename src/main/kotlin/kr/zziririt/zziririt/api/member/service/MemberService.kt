@@ -11,7 +11,7 @@ import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
 import kr.zziririt.zziririt.infra.security.UserPrincipal
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
@@ -63,6 +63,17 @@ class MemberService(
         }
 
         boardManagerCheck.toViewer()
+    }
+
+
+    @Scheduled(cron = "0 0 3 1/1 * ?")
+    @Transactional
+    fun updateMemberStatusToSleeper() {
+        val sleeperCandidates = memberRepository.findSleeperCandidatesMemberId()
+
+        if(sleeperCandidates.isNotEmpty()) {
+            memberRepository.bulkUpdateMemberStatusToSleeper(sleeperCandidates)
+        }
     }
 
 }
