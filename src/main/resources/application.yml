@@ -56,9 +56,9 @@ spring:
     activate:
       on-profile: local_profile
   datasource:
-    url: ${SPRING_TEST_DATASOURCE_URL}
-    username: ${SPRING_TEST_DATASOURCE_USERNAME}
-    password: ${SPRING_TEST_DATASOURCE_PASSWORD}
+    url: ${SPRING_LOCAL_DATASOURCE_URL}
+    username: ${SPRING_LOCAL_DATASOURCE_USERNAME}
+    password: ${SPRING_LOCAL_DATASOURCE_PASSWORD}
   h2:
     console:
       enabled: true
