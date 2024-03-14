@@ -11,8 +11,8 @@ import java.util.*
 class MemberAwareAudit : AuditorAware<Long> {
 
     override fun getCurrentAuditor(): Optional<Long> {
-        val authentication: Authentication = SecurityContextHolder.getContext().authentication
-        if (authentication.authorities.any { it.authority == "OAUTH2_USER" }) {
+        val authentication: Authentication? = SecurityContextHolder.getContext().authentication
+        if (authentication == null || (authentication.authorities.any { it.authority == "OAUTH2_USER" })) {
             return Optional.empty()
         }
 

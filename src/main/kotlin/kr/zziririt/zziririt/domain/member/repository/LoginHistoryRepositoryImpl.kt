@@ -18,5 +18,4 @@ class LoginHistoryRepositoryImpl(
     override fun findTopByMemberIdOrderByCreatedAtDesc(memberId: SocialMemberEntity): LoginHistoryEntity =
         loginHistoryJpaRepository.findTopByMemberIdOrderByCreatedAtDesc(memberId)
 
-
 }

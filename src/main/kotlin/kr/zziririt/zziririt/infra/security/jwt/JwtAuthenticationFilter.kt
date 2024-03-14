@@ -28,8 +28,8 @@ class JwtAuthenticationFilter(
         if (jwt != null) {
             jwtProvider.validateToken(jwt)
                 .onSuccess {
-                    val id = it.payload["memberId"] as String
-                    val providerId = it.payload.subject
+                    val id = it.payload.subject
+                    val providerId = it.payload["providerId"] as String
                     val role = it.payload["role"] as String
                     val email = it.payload["email"] as String
                     val principal = UserPrincipal(

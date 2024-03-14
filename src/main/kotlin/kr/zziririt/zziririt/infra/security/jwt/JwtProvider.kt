@@ -26,20 +26,27 @@ class JwtProvider(
         }
     }
 
-    fun generateAccessToken(subject: String, email: String, id: String, role: String): String {
-        return generateToken(subject, email, role, id, Duration.ofHours(accessTokenExpirationHour))
+    fun generateAccessToken(subject: Long, email: String, providerId: String, role: String, status: String): String {
+        return generateToken(subject, email, providerId, role, status, Duration.ofHours(accessTokenExpirationHour))
     }
 
-    fun generateToken(subject: String, email: String, role: String, id: String, expirationPeriod: Duration): String {
+    fun generateToken(
+        subject: Long,
+        email: String,
+        providerId: String,
+        role: String,
+        status: String,
+        expirationPeriod: Duration
+    ): String {
         val claims: Claims = Jwts.claims()
-            .add(mapOf("role" to role, "email" to email, "memberId" to id))
+            .add(mapOf("role" to role, "email" to email, "providerId" to providerId, "status" to status))
             .build()
 
         val now = Instant.now()
         val key = Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
 
         return Jwts.builder()
-            .subject(subject)
+            .subject(subject.toString())
             .issuer(issuer)
             .issuedAt(Date.from(now))
             .expiration(Date.from(now.plus(expirationPeriod)))

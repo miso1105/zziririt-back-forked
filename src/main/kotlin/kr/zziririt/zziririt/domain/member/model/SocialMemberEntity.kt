@@ -46,4 +46,16 @@ class SocialMemberEntity(
         this.memberStatus = MemberStatus.BANNED
     }
 
+    companion object {
+        fun ofNaver(providerId: String, nickname: String, email:String, provider:String, memberRole: MemberRole, memberStatus: MemberStatus) : SocialMemberEntity {
+            return SocialMemberEntity(
+                email = email,
+                nickname = nickname,
+                provider = OAuth2Provider.NAVER,
+                providerId = providerId,
+                memberRole = memberRole,
+                memberStatus = memberStatus
+            )
+        }
+    }
 }
