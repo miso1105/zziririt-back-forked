@@ -7,7 +7,7 @@
 # 🌙 소개
 
 ---
-찌리릿은 네이버 실시간 스트리밍 플랫폼 '치지직' 스트리머와 시청자를 위한 커뮤니티입니다.
+찌리릿은 네이버 실시간 스트리밍 플랫폼 '치지직' 스트리머와 시청자를 위한 커뮤니티입니다.<br>
 스트리머의 신청에 따라 본인의 게시판을 신청할 수 있고, 자유롭게 게시판을 커스텀할 수 있습니다.
 
 # 🖥 프로젝트 화면
@@ -42,34 +42,23 @@
 
 ---
 
-<img src= "img/teamRule.png" width="700">
+## 🤝 팀 핵심가치
+<img src= "img/teamCore.png" width="700">
+
+## 😸 팀 문화
+<img src= "img/teamCulture.png" width="700">
 
 
 
+<br>
 
 
-## 🛠 기술 스택
+# 🐋 Tech Stack
 
 ---
-
-<div align=center>
-
-## 🐋 Tech Stack
 
 <img src= "img/stack.png" width="550">
 
----
-
-### IDE
-
----
-
-IntelliJ IDEA 2023.3 (Ultimate Edition)
-
-### 코드 & 커밋 컨벤션
-
----
-<a href="https://www.notion.so/moveuk/60a493b388c0428cb905d0f9927dcf8b?pvs=4"><img src="https://img.shields.io/badge/NOTION-000000?style=for-the-badge&logo=notion&logoColor=white"></a>
 
 
 # 🏗️ Infrastructure
@@ -81,7 +70,14 @@ IntelliJ IDEA 2023.3 (Ultimate Edition)
 # 🔀 CI/CD Pipeline
 
 ---
-<img src= "img/cicd.png" width="800">
+<img src= "img/ciCd.png" width="800">
+
+
+# 💯 Test Code
+
+---
+
+<img src= "img/testCode.png" width="800">
 
 
 # ☄️ Trouble Shooting
