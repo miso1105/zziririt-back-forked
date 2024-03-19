@@ -76,4 +76,11 @@ class MemberService(
         }
     }
 
+    @Transactional
+    fun getSubscribeByMember(userPrincipal: UserPrincipal): List<Long> {
+        val memberCheck = memberRepository.findByIdOrNull(userPrincipal.memberId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        return memberCheck.subscribeBoardsList.map { it }
+    }
+
 }

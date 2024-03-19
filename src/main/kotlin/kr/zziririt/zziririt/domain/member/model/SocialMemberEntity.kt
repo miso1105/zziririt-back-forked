@@ -27,6 +27,10 @@ class SocialMemberEntity(
     @Column(name = "member_status", nullable = false)
     var memberStatus: MemberStatus = MemberStatus.NORMAL,
 
+    @ElementCollection
+    @CollectionTable(name = "member_subscriptions", joinColumns = [JoinColumn(name = "social_member_id")])
+    @Column(name = "subscribe_board_id")
+    val subscribeBoardsList: MutableList<Long> = mutableListOf()
 
     ) : BaseTimeEntity() {
     @Id

@@ -27,7 +27,7 @@ class OAuth2LoginSuccessHandler(
             subject = member?.id!!,
             email = memberInfo.email,
             providerId = memberInfo.providerId,
-            role = memberInfo.memberRole.toString(),
+            role = member.memberRole.toString(),
             status = memberInfo.memberStatus.toString()
         )
         response.contentType = MediaType.APPLICATION_JSON_VALUE

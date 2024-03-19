@@ -21,6 +21,10 @@ class BoardEntity(
 
     @Column(name = "board_name", nullable = false)
     var boardName: String,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board_act_status")
+    var boardActStatus: BoardActStatus = BoardActStatus.ACTIVE,
 ) : BaseEntity() {
 
     @Id
