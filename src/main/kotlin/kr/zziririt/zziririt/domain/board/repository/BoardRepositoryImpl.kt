@@ -4,6 +4,7 @@ import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.infra.jpa.board.BoardJpaRepository
 import kr.zziririt.zziririt.infra.querydsl.board.BoardQueryDslRepositoryImpl
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
+import kr.zziririt.zziririt.infra.querydsl.board.ChildBoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -30,11 +31,13 @@ class BoardRepositoryImpl(
 
     override fun existsBoardEntityByBoardName(boardName: String): Boolean = boardJpaRepository.existsBoardEntityByBoardName(boardName)
 
-    override fun findStreamersByPageable(pageable: Pageable): Page<StreamerBoardRowDto> = boardQueryDslRepositoryImpl.findStreamersByPageable(pageable)
+    override fun findStreamers(): List<StreamerBoardRowDto> = boardQueryDslRepositoryImpl.findStreamers()
 
     override fun findInactiveBoardStatus(): List<Long> = boardQueryDslRepositoryImpl.findBoardStatusToInactive()
 
-    override fun updateBoardStatusToInactive(inactiveBoardId: List<Long>) = boardQueryDslRepositoryImpl.updateBoardStatusToInactive(inactiveBoardId)
+    override fun updateBoardStatusToInactive(inactiveBoardIdList: List<Long>) = boardQueryDslRepositoryImpl.updateBoardStatusToInactive(inactiveBoardIdList)
 
     override fun findActiveStatusBoards(pageable: Pageable): Page<BoardRowDto> = boardQueryDslRepositoryImpl.findActiveStatusBoards(pageable)
+
+    override fun findChildBoards(boardId: Long): List<ChildBoardRowDto> = boardQueryDslRepositoryImpl.findChildBoards(boardId)
 }

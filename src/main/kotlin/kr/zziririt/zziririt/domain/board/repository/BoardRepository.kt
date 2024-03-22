@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.domain.board.repository
 
 import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
+import kr.zziririt.zziririt.infra.querydsl.board.ChildBoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,11 +23,13 @@ interface BoardRepository {
 
     fun existsBoardEntityByBoardName(boardName: String): Boolean
 
-    fun findStreamersByPageable(pageable: Pageable): Page<StreamerBoardRowDto>
+    fun findStreamers(): List<StreamerBoardRowDto>
 
     fun findInactiveBoardStatus(): List<Long>
 
     fun updateBoardStatusToInactive(inactiveBoardIdList: List<Long>)
 
     fun findActiveStatusBoards(pageable: Pageable): Page<BoardRowDto>
+
+    fun findChildBoards(boardId: Long): List<ChildBoardRowDto>
 }

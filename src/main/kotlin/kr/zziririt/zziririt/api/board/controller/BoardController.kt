@@ -1,9 +1,10 @@
 package kr.zziririt.zziririt.api.board.controller
 
 import jakarta.validation.Valid
-import kr.zziririt.zziririt.api.board.dto.BoardDto
-import kr.zziririt.zziririt.api.board.dto.StreamerFormDto
-import kr.zziririt.zziririt.api.board.dto.SubscribeBoardDto
+import kr.zziririt.zziririt.api.board.dto.request.BoardRequest
+import kr.zziririt.zziririt.api.board.dto.request.StreamerBoardApplicationRequest
+import kr.zziririt.zziririt.api.board.dto.request.StreamerBoardRequest
+import kr.zziririt.zziririt.api.board.dto.request.SubscribeBoardRequest
 import kr.zziririt.zziririt.api.board.service.BoardService
 import kr.zziririt.zziririt.api.dto.CommonResponse
 import kr.zziririt.zziririt.global.responseEntity
@@ -25,30 +26,40 @@ class BoardController(
     @PostMapping("/apply")
     fun createStreamerApply(
         @RequestPart("image") multipartFile: List<MultipartFile>,
-        @Valid @RequestPart streamerFormDto: StreamerFormDto,
+        @Valid @RequestPart streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.createStreamerForm(multipartFile, streamerFormDto, userPrincipal)
+        boardService.createStreamerBoardApplication(multipartFile, streamerBoardApplicationRequest, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
     @PutMapping("/apply")
     fun updateStreamerApply(
         @RequestPart("image") multipartFile: List<MultipartFile>,
-        @Valid @RequestPart streamerFormDto: StreamerFormDto,
+        @Valid @RequestPart streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.updateStreamerForm(streamerFormDto, multipartFile, userPrincipal)
+        boardService.updateStreamerBoardApplication(streamerBoardApplicationRequest, multipartFile, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     fun createBoard(
-        @Valid @RequestBody boardDto: BoardDto,
+        @Valid @RequestBody boardRequest: BoardRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.createBoard(boardDto, userPrincipal)
+        boardService.createBoard(boardRequest, userPrincipal)
+        return responseEntity(HttpStatus.CREATED)
+    }
+
+    @PostMapping("/streamer")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun createStreamerBoard(
+        @Valid @RequestBody streamerBoardRequest: StreamerBoardRequest,
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ): ResponseEntity<CommonResponse<Nothing>> {
+        boardService.createStreamerBoard(streamerBoardRequest, userPrincipal)
         return responseEntity(HttpStatus.CREATED)
     }
 
@@ -56,10 +67,10 @@ class BoardController(
     @PreAuthorize("hasRole('ADMIN')")
     fun createChildBoard(
         @PathVariable boardId: Long,
-        @Valid @RequestBody boardDto: BoardDto,
+        @Valid @RequestBody boardRequest: BoardRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.createChildBoard(boardId, boardDto, userPrincipal)
+        boardService.createChildBoard(boardId, boardRequest, userPrincipal)
         return responseEntity(HttpStatus.CREATED)
     }
 
@@ -67,10 +78,10 @@ class BoardController(
     @PreAuthorize("hasRole('ADMIN')")
     fun updateBoard(
         @PathVariable boardId: Long,
-        @Valid @RequestBody boardDto: BoardDto,
+        @Valid @RequestBody boardRequest: BoardRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.updateBoard(boardId, boardDto, userPrincipal)
+        boardService.updateBoard(boardId, boardRequest, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
@@ -86,19 +97,19 @@ class BoardController(
 
     @PostMapping("/subscribe")
     fun createSubscribeBoard(
-        @RequestBody subscribeBoardDto: SubscribeBoardDto,
+        @RequestBody subscribeBoardRequest: SubscribeBoardRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.createSubscribeBoard(subscribeBoardDto, userPrincipal)
+        boardService.createSubscribeBoard(subscribeBoardRequest, userPrincipal)
         return responseEntity(HttpStatus.CREATED)
     }
 
     @PostMapping("/unsubscribe")
     fun unSubscribeBoard(
-        @RequestBody subscribeBoardDto: SubscribeBoardDto,
+        @RequestBody subscribeBoardRequest: SubscribeBoardRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.unSubscribeBoard(subscribeBoardDto, userPrincipal)
+        boardService.unSubscribeBoard(subscribeBoardRequest, userPrincipal)
         return responseEntity(HttpStatus.CREATED)
     }
 
@@ -114,7 +125,8 @@ class BoardController(
     ) = responseEntity(HttpStatus.OK) { boardService.getActiveStatusBoards(pageable) }
 
     @GetMapping("/streamer")
-    fun getStreamers(
-        @PageableDefault(size = 60) pageable: Pageable
-    ) = responseEntity(HttpStatus.OK) { boardService.getStreamers(pageable) }
+    fun getStreamers() = responseEntity(HttpStatus.OK) { boardService.getStreamers() }
+
+    @GetMapping("/{boardId}/child")
+    fun getChildBoards(@PathVariable boardId: Long) = responseEntity(HttpStatus.OK) { boardService.getChildBoards(boardId) }
 }

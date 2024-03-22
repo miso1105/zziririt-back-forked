@@ -7,10 +7,10 @@ import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
 
 @Entity
-@Table(name = "streamer_form")
-@SQLDelete(sql = "UPDATE board SET is_deleted = true WHERE id = ?")
+@Table(name = "streamer_board_application")
+@SQLDelete(sql = "UPDATE streamer_board_application SET is_deleted = true WHERE id = ?")
 @SQLRestriction(value = "is_deleted = false")
-class StreamerFormEntity(
+class StreamerBoardApplicationEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     val socialMemberEntity: SocialMemberEntity,
@@ -29,7 +29,7 @@ class StreamerFormEntity(
     var id: Long? = null
 
     fun update(applyUrl: String, applyBoardName: String) {
-        this.applyUrl = "https://zziririt.kr/${applyUrl}"
+        this.applyUrl = applyUrl
         this.applyBoardName = applyBoardName
     }
 

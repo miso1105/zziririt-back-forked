@@ -1,6 +1,7 @@
 package kr.zziririt.zziririt.infra.querydsl.board
 
 import kr.zziririt.zziririt.domain.board.model.BoardActStatus
+import kr.zziririt.zziririt.domain.board.model.BoardType
 import kr.zziririt.zziririt.domain.board.model.QBoardEntity
 import kr.zziririt.zziririt.domain.post.model.QPostEntity
 import kr.zziririt.zziririt.infra.querydsl.QueryDslSupport
@@ -38,27 +39,19 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
         return PageImpl(content, pageable, count)
     }
 
-    override fun findStreamersByPageable(pageable: Pageable): Page<StreamerBoardRowDto> {
-        val content = queryFactory
+    override fun findStreamers(): List<StreamerBoardRowDto> {
+        return queryFactory
             .select(
                 QStreamerBoardRowDto(
                     board.id,
-                    board.boardName
+                    board.boardUrl,
+                    board.boardName,
                 )
             )
             .from(board)
-            .where(board.parent.isNotNull)
+            .where(board.boardType.eq(BoardType.STREAMER_BOARD))
             .orderBy(board.parent.id.asc())
-            .offset(pageable.offset)
-            .limit(pageable.pageSize.toLong())
             .fetch()
-
-        val count = queryFactory
-            .select(board.count())
-            .from(board)
-            .fetchOne() ?: 0L
-
-        return PageImpl(content, pageable, count)
     }
 
     override fun findBoardStatusToInactive(): List<Long> {
@@ -100,5 +93,17 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
             .fetchOne() ?: 0L
 
         return PageImpl(content, pageable, count)
+    }
+
+    override fun findChildBoards(boardId: Long): List<ChildBoardRowDto> {
+        return queryFactory.select(
+            QChildBoardRowDto(
+                board.id,
+                board.boardName
+            )
+        ).from(board)
+            .where(board.parent.id.eq(boardId))
+            .orderBy(board.boardName.asc())
+            .fetch()
     }
 }

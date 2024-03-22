@@ -22,6 +22,13 @@ class BoardEntity(
     @Column(name = "board_name", nullable = false)
     var boardName: String,
 
+    @Column(name = "board_url", nullable = false)
+    var boardUrl: String,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board_type")
+    var boardType: BoardType,
+
     @Enumerated(EnumType.STRING)
     @Column(name = "board_act_status")
     var boardActStatus: BoardActStatus = BoardActStatus.ACTIVE,
