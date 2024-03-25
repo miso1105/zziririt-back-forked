@@ -108,6 +108,8 @@ auth:
     secret: ${AUTH_JWT_SECRET}
     accessTokenExpirationHour: ${AUTH_JWT_ACCESSTOKENEXP}
     refreshTokenExpirationHour: ${AUTH_JWT_REFRESHTOKENEXP}
+  front-host: ${AUTH_FRONT_HOST}
+  redirect-url: ${AUTH_REDIRECT_URL}
 
 cloud:
   aws:

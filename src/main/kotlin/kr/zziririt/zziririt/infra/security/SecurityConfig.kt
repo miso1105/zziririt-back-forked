@@ -3,6 +3,7 @@ package kr.zziririt.zziririt.infra.security
 import kr.zziririt.zziririt.infra.oauth2.service.OAuth2LoginSuccessHandler
 import kr.zziririt.zziririt.infra.oauth2.service.OAuth2MemberService
 import kr.zziririt.zziririt.infra.security.jwt.JwtAuthenticationFilter
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -11,11 +12,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfig(
+    @Value("\${auth.front-host}") private val frontHost: String,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     private val oAuth2MemberService: OAuth2MemberService,
     private val oAuth2LoginSuccessHandler: OAuth2LoginSuccessHandler
@@ -27,8 +32,9 @@ class SecurityConfig(
             .httpBasic { it.disable() }
             .formLogin { it.disable() }
             .csrf { it.disable() }
-            .cors { it.disable() }
             .headers { it.frameOptions { options -> options.sameOrigin() } }
+            .cors { it.configurationSource(corsConfigurationSource()) }
+            .headers { headers -> headers.frameOptions { frameOptions -> frameOptions.sameOrigin() } }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
@@ -43,5 +49,18 @@ class SecurityConfig(
             }
             .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
+    }
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration().apply {
+            allowedOriginPatterns = listOf(frontHost)
+            addAllowedMethod("*")
+            addAllowedHeader("*")
+            allowCredentials = true
+            maxAge = 3600L
+        }
+        return UrlBasedCorsConfigurationSource().apply {
+            registerCorsConfiguration("/**", configuration)
+        }
     }
 }
