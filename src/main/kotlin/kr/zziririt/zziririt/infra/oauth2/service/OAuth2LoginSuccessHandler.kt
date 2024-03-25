@@ -30,6 +30,7 @@ class OAuth2LoginSuccessHandler(
             role = member.memberRole.toString(),
             status = memberInfo.memberStatus.toString()
         )
+        response.addHeader("Authorization", "Bearer $accessToken")
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.writer.write(accessToken)
     }

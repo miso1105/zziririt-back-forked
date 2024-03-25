@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.api.member.controller
 
 import jakarta.validation.Valid
 import kr.zziririt.zziririt.api.member.dto.request.AdjustRoleRequest
+import kr.zziririt.zziririt.api.member.dto.request.SelectMyIconRequest
 import kr.zziririt.zziririt.api.member.dto.request.SetBoardManagerRequest
 import kr.zziririt.zziririt.api.member.service.MemberService
 import kr.zziririt.zziririt.global.responseEntity
@@ -49,4 +50,11 @@ class MemberController(
     fun getSubscribeBoards(
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ) = responseEntity(HttpStatus.OK) { memberService.getSubscribeByMember(userPrincipal) }
+
+    @PutMapping("/iconselect")
+    fun selectDefaultIcon(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal,
+        @RequestBody request: SelectMyIconRequest,
+    ) = responseEntity(HttpStatus.OK) { memberService.selectMyIcon(userPrincipal, request)}
+
 }

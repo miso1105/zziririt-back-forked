@@ -13,7 +13,7 @@ class SocialMemberQueryDslRepositoryImpl : SocialMemberQueryDslRepository, Query
     private val member = QSocialMemberEntity.socialMemberEntity
     private val loginHistory = QLoginHistoryEntity.loginHistoryEntity
 
-    override fun findSleeperCandidatesMemberId() : List<Long> {
+    override fun findSleeperCandidatesMemberId(): List<Long> {
         val baseSleeperTime = LocalDateTime.now().minusYears(1)
 
         return queryFactory
@@ -26,11 +26,10 @@ class SocialMemberQueryDslRepositoryImpl : SocialMemberQueryDslRepository, Query
     }
 
     override fun bulkUpdateMemberStatusToSleeper(memberIdList: List<Long>) {
-         queryFactory
-             .update(member)
-             .set(member.memberStatus, MemberStatus.SLEEPER)
-             .where(member.id.`in`(memberIdList))
-             .execute()
+        queryFactory
+            .update(member)
+            .set(member.memberStatus, MemberStatus.SLEEPER)
+            .where(member.id.`in`(memberIdList))
+            .execute()
     }
-
 }
