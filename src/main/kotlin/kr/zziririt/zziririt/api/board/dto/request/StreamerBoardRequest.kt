@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated
 
 @Validated
 data class StreamerBoardRequest(
+    val boardOwnerId: Long,
     @field:NotBlank
     val boardName: String,
     @field:NotBlank

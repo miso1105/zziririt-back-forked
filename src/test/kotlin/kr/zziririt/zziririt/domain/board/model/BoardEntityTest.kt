@@ -13,7 +13,7 @@ class BoardEntityTest: FeatureSpec ({
 
     feature("Board Entity update 메서드를 실행한다.") {
         scenario("update 메서드를 사용하여 board 수정 시 boardName 이 수정되어야 한다.") {
-            boardFixture.update(boardName = "modified test boardName")
+            boardFixture.update(boardName = "modified test boardName", socialMember = socialMember)
         }
     }
 })
