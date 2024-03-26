@@ -23,7 +23,7 @@ allOpen {
 }
 
 group = "kr.zziririt"
-version = "0.0.2-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
