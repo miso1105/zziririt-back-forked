@@ -6,9 +6,14 @@ import java.time.LocalDateTime
 
 data class PostRowDto @QueryProjection constructor(
     val postId: Long,
+    val zzirit: Long,
+    val boardName: String,
     val title: String,
     val memberId: Long,
     val nickname: String,
+    val privateStatus: Boolean,
     val hit: Long,
     val createdAt: LocalDateTime
-): Serializable
+): Serializable {
+    var permissionToRead: Boolean = !privateStatus
+}

@@ -20,8 +20,9 @@ class PostRepositoryImpl(
     override fun findByIdOrNull(id: Long): PostEntity? = postJpaRepository.findByIdOrNull(id)
     override fun save(entity: PostEntity): PostEntity = postJpaRepository.save(entity)
     override fun delete(entity: PostEntity) = postJpaRepository.delete(entity)
-    override fun findAll(): List<PostEntity> = postJpaRepository.findAll()
+    override fun findAll(pageable: Pageable): PageImpl<PostRowDto> = postQueryDslRepositoryImpl.findAll(pageable)
     override fun findAllById(idList: List<Long>): List<PostEntity> = postJpaRepository.findAllById(idList)
+    override fun findAllByBoardId(boardId: Long, pageable: Pageable): PageImpl<PostRowDto> = postQueryDslRepositoryImpl.findAllByBoardId(boardId, pageable)
     override fun searchByWhere(condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto> =
         postQueryDslRepositoryImpl.searchByWhere(condition, pageable)
     override fun saveSearchPostCacheKeyByPostId(postId: Long, searchPostCacheKey: String) =

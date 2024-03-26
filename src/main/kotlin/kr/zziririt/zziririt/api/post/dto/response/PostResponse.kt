@@ -12,12 +12,14 @@ data class PostResponse(
     val nickname: String,
     val privateStatus: Boolean,
     val blindStatus: Boolean,
+    val permissionToUpdateStatus: Boolean,
+    val permissionToDeleteStatus: Boolean,
     val zziritCount: Long,
     val hit: Long,
     val createdAt: LocalDateTime,
 ) {
     companion object {
-        fun from(postEntity: PostEntity): PostResponse = PostResponse(
+        fun of(postEntity: PostEntity, permissionToUpdateStatus: Boolean, permissionToDeleteStatus: Boolean): PostResponse = PostResponse(
             postId = postEntity.id!!,
             title = postEntity.title,
             content = postEntity.content,
@@ -25,6 +27,8 @@ data class PostResponse(
             nickname = postEntity.socialMember.nickname,
             privateStatus = postEntity.privateStatus,
             blindStatus = postEntity.blindStatus,
+            permissionToUpdateStatus = permissionToUpdateStatus,
+            permissionToDeleteStatus = permissionToDeleteStatus,
             zziritCount = postEntity.zziritCount,
             hit = postEntity.hit,
             createdAt = postEntity.createdAt

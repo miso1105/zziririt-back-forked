@@ -18,14 +18,89 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
     private val post = QPostEntity.postEntity
     private val socialMember = QSocialMemberEntity.socialMemberEntity
     private val board = QBoardEntity.boardEntity
+    override fun findAll(pageable: Pageable): PageImpl<PostRowDto> {
+        val content = queryFactory
+            .select(
+                QPostRowDto(
+                    post.id.`as`("postId"),
+                    post.zziritCount,
+                    post.board.boardName,
+                    post.title,
+                    post.socialMember.id.`as`("memberId"),
+                    post.socialMember.nickname,
+                    post.privateStatus,
+                    post.hit,
+                    post.createdAt
+                )
+            )
+            .from(post)
+            .leftJoin(post.socialMember, socialMember)
+            .leftJoin(post.board, board)
+            .where(post.privateStatus.eq(false))
+            .orderBy(post.id.desc())
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch().toList()
+
+        val count: Long = queryFactory
+            .select(post.count())
+            .from(post)
+            .leftJoin(post.socialMember, socialMember)
+            .where(post.privateStatus.eq(false))
+            .offset(pageable.offset * (pageable.pageNumber - 1L))
+            .limit(pageable.pageSize.toLong())
+            .fetchOne() ?: 0
+
+        return PageImpl(content, pageable, count)
+    }
+
+    override fun findAllByBoardId(boardId: Long, pageable: Pageable): PageImpl<PostRowDto> {
+        val content = queryFactory
+            .select(
+                QPostRowDto(
+                    post.id.`as`("postId"),
+                    post.zziritCount,
+                    post.board.boardName,
+                    post.title,
+                    post.socialMember.id.`as`("memberId"),
+                    post.socialMember.nickname,
+                    post.privateStatus,
+                    post.hit,
+                    post.createdAt
+                )
+            )
+            .from(post)
+            .leftJoin(post.socialMember, socialMember)
+            .leftJoin(post.board, board)
+            .where(post.board.id.eq(boardId))
+            .orderBy(post.id.desc())
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch().toList()
+
+        val count: Long = queryFactory
+            .select(post.count())
+            .from(post)
+            .leftJoin(post.socialMember, socialMember)
+            .where(post.board.id.eq(boardId))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetchOne() ?: 0
+
+        return PageImpl(content, pageable, count)
+    }
+
     override fun searchByWhere(condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto> {
         val content = queryFactory
             .select(
                 QPostRowDto(
                     post.id.`as`("postId"),
+                    post.zziritCount,
+                    post.board.boardName,
                     post.title,
                     post.socialMember.id.`as`("memberId"),
                     post.socialMember.nickname,
+                    post.privateStatus,
                     post.hit,
                     post.createdAt
                 )
@@ -45,6 +120,8 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
 
                     else -> null
                 }
+            ).where(
+                post.privateStatus.eq(false)
             ).orderBy(post.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -66,6 +143,8 @@ class PostQueryDslRepositoryImpl : PostQueryDslRepository, QueryDslSupport() {
 
                     else -> null
                 }
+            ).where(
+                post.privateStatus.eq(false)
             )
             .offset(pageable.offset * (pageable.pageNumber - 1L))
             .limit(pageable.pageSize.toLong())

@@ -5,16 +5,18 @@ import kr.zziririt.zziririt.api.post.dto.request.CreatePostRequest
 import kr.zziririt.zziririt.api.post.dto.request.UpdatePostRequest
 import kr.zziririt.zziririt.api.post.dto.response.PostResponse
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
+import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.domain.post.repository.PostRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
 import kr.zziririt.zziririt.infra.querydsl.post.dto.PostRowDto
+import kr.zziririt.zziririt.infra.security.UserPrincipal
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -41,25 +43,65 @@ class PostService(
             .toEntity().let {
                 postRepository.save(it)
             }.let {
-                PostResponse.from(it)
+                PostResponse.of(it, true, true)
             }
     }
 
-    @Transactional(readOnly = true)
-    fun getPost(postId: Long): PostResponse {
+    fun getAllPosts(pageable: Pageable): PageImpl<PostRowDto> {
+        return postRepository.findAll(pageable)
+    }
+
+    @Transactional
+    fun getPost(userPrincipal: UserPrincipal?, postId: Long): PostResponse {
         val findPost = postRepository.findByIdOrNull(postId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
+        var permissionToUpdateStatus = false
+        var permissionToDeleteStatus = false
+        if (userPrincipal != null) {
+            val findSocialMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
+                ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+            if (findPost.socialMember.id == userPrincipal.memberId) {
+                permissionToUpdateStatus = true
+                permissionToDeleteStatus = true
+            } else if (findSocialMember.memberRole == MemberRole.ADMIN ||
+                userPrincipal.memberId == findPost.board.id
+            ) {
+                permissionToDeleteStatus = true
+            }
+        }
+
         findPost.incrementHit()
 
-        return PostResponse.from(findPost)
+        return PostResponse.of(findPost, permissionToUpdateStatus, permissionToDeleteStatus)
     }
 
     @Transactional(readOnly = true)
-    fun getPosts(condition: PostSearchCondition): PageImpl<PostRowDto> {
+    fun getPosts(userPrincipal: UserPrincipal?, boardId: Long, pageable: Pageable): PageImpl<PostRowDto> {
+        val findBoard =
+            boardRepository.findByIdOrNull(boardId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        return postRepository.findAllByBoardId(boardId, pageable).map {
+            if (userPrincipal != null &&
+                (it.memberId == userPrincipal.memberId ||
+                        userPrincipal.authorities.any { grandAuthority -> grandAuthority.authority == "ROLE_ADMIN" } ||
+                        userPrincipal.memberId == findBoard.socialMember.id
+                        )
+            ) {
+                it.permissionToRead = true
+            }
+            it as PostRowDto
+        }.let {
+            PageImpl(it.toList(), it.pageable, it.totalElements)
+        }
+    }
+
+    @Transactional(readOnly = true)
+    fun getPostsBySearch(condition: PostSearchCondition): PageImpl<PostRowDto> {
         return postRepository.searchByWhere(
             condition,
-            PageRequest.of(condition.page.toInt() - 1, condition.size.toInt())
+            PageRequest.of(condition.page.toInt(), condition.size.toInt())
         )
     }
 
@@ -69,10 +111,10 @@ class PostService(
         keyGenerator = "PostSearchKeyGenerator",
         cacheManager = "caffeineCacheManager"
     )
-    fun getPostsWithCache(condition: PostSearchCondition): PageImpl<PostRowDto> {
+    fun getPostsBySearchWithCache(condition: PostSearchCondition): PageImpl<PostRowDto> {
         return postRepository.searchByWhere(
             condition,
-            PageRequest.of(condition.page.toInt() - 1, condition.size.toInt())
+            PageRequest.of(condition.page.toInt(), condition.size.toInt())
         ).onEach { postRepository.saveSearchPostCacheKeyByPostId(it.postId, condition.makePostSearchCacheKey()) }
     }
 
@@ -82,12 +124,19 @@ class PostService(
         keyGenerator = "PostSearchKeyGenerator",
         cacheManager = "redisCacheManager"
     )
-    fun getPostsWithRedisCache(condition: PostSearchCondition): PageImpl<PostRowDto> {
+    fun getPostsBySearchWithRedisCache(
+        condition: PostSearchCondition
+    ): PageImpl<PostRowDto> {
         val searchByWhere = postRepository.searchByWhere(
             condition,
-            PageRequest.of(condition.page.toInt() - 1, condition.size.toInt())
+            PageRequest.of(condition.page.toInt(), condition.size.toInt())
         )
-        searchByWhere.forEach { postRepository.saveSearchPostCacheKeyByPostId(it.postId, condition.makePostSearchCacheKey()) }
+        searchByWhere.forEach {
+            postRepository.saveSearchPostCacheKeyByPostId(
+                it.postId,
+                condition.makePostSearchCacheKey()
+            )
+        }
 
         return searchByWhere
     }
@@ -96,11 +145,13 @@ class PostService(
     fun updatePost(
         postId: Long,
         updatePostRequest: UpdatePostRequest,
-        authenticatedMemberId: Long
+        userPrincipal: UserPrincipal
     ) {
         val findPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
-        check(authenticatedMemberId == findPost.socialMember.id) { throw RestApiException(ErrorCode.UNAUTHORIZED) }
+        check(userPrincipal.memberId == findPost.socialMember.id ||
+                userPrincipal.authorities.any { grandAuthority -> grandAuthority.authority == "ROLE_ADMIN" }
+        ) { throw RestApiException(ErrorCode.UNAUTHORIZED) }
 
         postRepository.clearAllSearchPostCacheRelatedToPostId(postId)
 
@@ -114,11 +165,14 @@ class PostService(
     @Transactional
     fun deletePost(
         postId: Long,
-        authenticatedMemberId: Long
+        userPrincipal: UserPrincipal
     ) {
         val findPost = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
-        check(authenticatedMemberId == findPost.socialMember.id) { throw RestApiException(ErrorCode.UNAUTHORIZED) }
+        check(userPrincipal.memberId == findPost.socialMember.id ||
+                userPrincipal.authorities.any { grandAuthority -> grandAuthority.authority == "ROLE_ADMIN" } ||
+                userPrincipal.memberId == findPost.board.socialMember.id
+        ) { throw RestApiException(ErrorCode.UNAUTHORIZED) }
 
         postRepository.clearAllSearchPostCacheRelatedToPostId(postId)
 
