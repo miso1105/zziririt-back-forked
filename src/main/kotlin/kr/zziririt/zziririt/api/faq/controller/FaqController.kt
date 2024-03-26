@@ -6,6 +6,7 @@ import kr.zziririt.zziririt.api.faq.dto.UpdateFaqRequest
 import kr.zziririt.zziririt.api.faq.service.FaqService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/v1/cs/faqs")
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 class FaqController(
     private val faqService: FaqService
 ) {
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     fun createFaq(
         @RequestBody createFaqRequest: CreateFaqRequest
@@ -23,18 +24,22 @@ class FaqController(
             .body(faqService.createFaq(createFaqRequest))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{faqId}")
     fun updateFaq(
         @PathVariable faqId: Long,
-        @RequestBody updateFaqRequest: UpdateFaqRequest
+        @RequestBody updateFaqRequest: UpdateFaqRequest,
     ): ResponseEntity<FaqResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(faqService.updateFaq(faqId, updateFaqRequest))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{faqId}")
-    fun deleteFaq(@PathVariable faqId: Long): ResponseEntity<Unit> {
+    fun deleteFaq(
+        @PathVariable faqId: Long,
+    ): ResponseEntity<Unit> {
         faqService.deleteFaq(faqId)
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)

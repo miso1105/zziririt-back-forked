@@ -26,7 +26,6 @@ class FaqService(
     fun updateFaq(faqId: Long, updateFaqRequest: UpdateFaqRequest): FaqResponse {
         val faqEntity = faqRepository.findByIdOrNull(faqId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND, "FAQ not found")
-
         faqEntity.question = updateFaqRequest.question
         faqEntity.answer = updateFaqRequest.answer
         val updatedFaqEntity = faqRepository.save(faqEntity)
@@ -36,14 +35,14 @@ class FaqService(
     @Transactional
     fun deleteFaq(faqId: Long) {
         val faqToDelete = faqRepository.findByIdOrNull(faqId)
-            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND, "FAQ not found")
         faqRepository.delete(faqToDelete)
     }
 
     fun getFaqs(): List<FaqResponse> {
         val faqEntities: List<FaqEntity> = faqRepository.findAll()
         if (faqEntities.isEmpty()) {
-            throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+            throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND, "FAQ not found")
         }
         return faqEntities.map { FaqResponse.from(it) }
     }
