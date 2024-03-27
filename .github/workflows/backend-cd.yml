@@ -71,4 +71,4 @@ jobs:
             docker stop server
             docker rm server
             docker pull moveuk/zziririt
-            docker run -d --rm --name server -v ~/app/logs:/home/logs -p 8080:8080 moveuk/zziririt
+            docker run -d --rm --name server -v ~/app/logs:/home/logs -p 8080:8080 -e TZ=Asia/Seoul moveuk/zziririt
