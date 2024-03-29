@@ -5,6 +5,7 @@ import kr.zziririt.zziririt.api.post.dto.request.CreatePostRequest
 import kr.zziririt.zziririt.api.post.dto.request.UpdatePostRequest
 import kr.zziririt.zziririt.api.post.dto.response.PostResponse
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
+import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
 import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.domain.post.repository.PostRepository
@@ -17,6 +18,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,7 +26,8 @@ import org.springframework.transaction.annotation.Transactional
 class PostService(
     private val postRepository: PostRepository,
     private val socialMemberRepository: SocialMemberRepository,
-    private val boardRepository: BoardRepository
+    private val boardRepository: BoardRepository,
+    private val categoryRepository: CategoryRepository
 ) {
     @Transactional
     fun createPost(
@@ -36,10 +39,12 @@ class PostService(
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
         val findBoard =
             boardRepository.findByIdOrNull(boardId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        val findCategory = categoryRepository.findByIdOrNull(req.categoryId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         return req
             .member(findSocialMember)
             .board(findBoard)
+            .category(findCategory)
             .toEntity().let {
                 postRepository.save(it)
             }.let {
@@ -98,8 +103,9 @@ class PostService(
     }
 
     @Transactional(readOnly = true)
-    fun getPostsBySearch(condition: PostSearchCondition): PageImpl<PostRowDto> {
+    fun getPostsBySearch(boardId: Long, condition: PostSearchCondition): PageImpl<PostRowDto> {
         return postRepository.searchByWhere(
+            boardId,
             condition,
             PageRequest.of(condition.page.toInt(), condition.size.toInt())
         )
@@ -111,11 +117,12 @@ class PostService(
         keyGenerator = "PostSearchKeyGenerator",
         cacheManager = "caffeineCacheManager"
     )
-    fun getPostsBySearchWithCache(condition: PostSearchCondition): PageImpl<PostRowDto> {
+    fun getPostsBySearchWithCache(boardId: Long, condition: PostSearchCondition): PageImpl<PostRowDto> {
         return postRepository.searchByWhere(
+            boardId,
             condition,
             PageRequest.of(condition.page.toInt(), condition.size.toInt())
-        ).onEach { postRepository.saveSearchPostCacheKeyByPostId(it.postId, condition.makePostSearchCacheKey()) }
+        ).onEach { postRepository.saveSearchPostCacheKeyByPostId(it.postId, condition.makePostSearchCacheKey(boardId)) }
     }
 
     @Transactional
@@ -125,16 +132,18 @@ class PostService(
         cacheManager = "redisCacheManager"
     )
     fun getPostsBySearchWithRedisCache(
+        boardId: Long,
         condition: PostSearchCondition
     ): PageImpl<PostRowDto> {
         val searchByWhere = postRepository.searchByWhere(
+            boardId,
             condition,
             PageRequest.of(condition.page.toInt(), condition.size.toInt())
         )
         searchByWhere.forEach {
             postRepository.saveSearchPostCacheKeyByPostId(
                 it.postId,
-                condition.makePostSearchCacheKey()
+                condition.makePostSearchCacheKey(boardId)
             )
         }
 

@@ -53,20 +53,23 @@ class PostController(
         @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : #this") userPrincipal: UserPrincipal?
     ) = responseEntity(HttpStatus.OK) { postService.getPosts(userPrincipal, boardId, pageable) }
 
-    @GetMapping("/v1/boards/search/posts")
+    @GetMapping("/v1/boards/{boardId}/posts/search")
     fun getPostsBySearch(
+        @PathVariable boardId: Long,
         @Valid condition: PostSearchCondition
-    ) = responseEntity(HttpStatus.OK) { postService.getPostsBySearch(condition) }
+    ) = responseEntity(HttpStatus.OK) { postService.getPostsBySearch(boardId, condition) }
 
-    @GetMapping("/v2/boards/search/posts")
+    @GetMapping("/v2/boards/{boardId}/posts/search")
     fun getPostsWithCacheBySearch(
+        @PathVariable boardId: Long,
         @Valid condition: PostSearchCondition
-    ) = responseEntity(HttpStatus.OK) { postService.getPostsBySearchWithCache(condition) }
+    ) = responseEntity(HttpStatus.OK) { postService.getPostsBySearchWithCache(boardId, condition) }
 
-    @GetMapping("/v3/boards/search/posts")
+    @GetMapping("/v3/boards/{boardId}/posts/search")
     fun getPostsWithRedisCacheBySearch(
+        @PathVariable boardId: Long,
         @Valid condition: PostSearchCondition
-    ) = responseEntity(HttpStatus.OK) { postService.getPostsBySearchWithRedisCache(condition) }
+    ) = responseEntity(HttpStatus.OK) { postService.getPostsBySearchWithRedisCache(boardId, condition) }
 
     @PutMapping("/v1/boards/{boardId}/posts/{postId}")
     fun updatePost(

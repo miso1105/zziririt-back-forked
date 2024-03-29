@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.domain.post.model
 
 import jakarta.persistence.*
 import kr.zziririt.zziririt.domain.board.model.BoardEntity
+import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import kr.zziririt.zziririt.global.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
@@ -19,6 +20,10 @@ class PostEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "social_member_id", nullable = false)
     val socialMember: SocialMemberEntity,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    val category: CategoryEntity,
 
     @Column(name = "title", nullable = false)
     var title: String,

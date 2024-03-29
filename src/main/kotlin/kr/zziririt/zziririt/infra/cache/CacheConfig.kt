@@ -65,17 +65,30 @@ class CacheConfig {
 
     class PostSearchKeyGenerator : KeyGenerator {
         override fun generate(target: Any, method: Method, vararg params: Any): Any {
-            return if (params.isEmpty()) SimpleKey.EMPTY
-            else {
-                if (params.size == 1) {
-                    val param = params[0] as PostSearchCondition
-                    if (!param.javaClass.isArray) {
-                        return "ZziriritCache_Type:${param.searchType}_Term:${param.searchTerm}_Page:${param.page}_Size:${param.size}"
-                    }
+            return if (params.isEmpty()) {
+                SimpleKey.EMPTY
+            } else if (params.size == 2) {
+                val boardId = params[0]
+                val postSearchCondition = params[1] as PostSearchCondition
+                val sb = StringBuilder()
+                val baseKey = "ZziriritCache"
+                sb.append(baseKey)
+                sb.append("_boardId:${boardId}")
+                if (postSearchCondition.searchType != null) {
+                    sb.append("_Type:${postSearchCondition.searchType}")
                 }
+                if (postSearchCondition.searchTerm != null) {
+                    sb.append("_Term:${postSearchCondition.searchTerm}")
+                }
+                sb.append("_Page:${postSearchCondition.page}")
+                sb.append("_Size:${postSearchCondition.size}")
+                if (postSearchCondition.categoryId != null) {
+                    sb.append("_categoryId:${postSearchCondition.categoryId}")
+                }
+                return sb.toString()
+            } else {
                 return SimpleKey("ZziriritCache_", *params)
             }
-
         }
     }
 

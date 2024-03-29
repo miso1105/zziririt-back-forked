@@ -13,7 +13,7 @@ interface PostRepository {
     fun findAll(pageable: Pageable): PageImpl<PostRowDto>
     fun findAllById(idList: List<Long>): List<PostEntity>
     fun findAllByBoardId(boardId: Long, pageable: Pageable): PageImpl<PostRowDto>
-    fun searchByWhere(condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto>
+    fun searchByWhere(boardId: Long, condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto>
     fun saveSearchPostCacheKeyByPostId(postId: Long, searchPostCacheKey: String)
     fun clearAllSearchPostCacheRelatedToPostId(postId: Long)
 }

@@ -9,5 +9,6 @@ data class UpdatePostRequest(
     val title: String,
     @field:Size(min = 1, max = 20000, message = "게시글 내용의 글자수는 {min}자 이상 {max} 자 이하여야 합니다.")
     val content: String,
+    val categoryId: Long,
     val privateStatus: Boolean
 )

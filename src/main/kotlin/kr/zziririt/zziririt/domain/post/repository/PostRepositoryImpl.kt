@@ -23,8 +23,8 @@ class PostRepositoryImpl(
     override fun findAll(pageable: Pageable): PageImpl<PostRowDto> = postQueryDslRepositoryImpl.findAll(pageable)
     override fun findAllById(idList: List<Long>): List<PostEntity> = postJpaRepository.findAllById(idList)
     override fun findAllByBoardId(boardId: Long, pageable: Pageable): PageImpl<PostRowDto> = postQueryDslRepositoryImpl.findAllByBoardId(boardId, pageable)
-    override fun searchByWhere(condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto> =
-        postQueryDslRepositoryImpl.searchByWhere(condition, pageable)
+    override fun searchByWhere(boardId: Long, condition: PostSearchCondition, pageable: Pageable): PageImpl<PostRowDto> =
+        postQueryDslRepositoryImpl.searchByWhere(boardId, condition, pageable)
     override fun saveSearchPostCacheKeyByPostId(postId: Long, searchPostCacheKey: String) =
         postSearchCacheRedisRepository.saveSearchPostCacheKeyByPostId(postId, searchPostCacheKey)
     override fun clearAllSearchPostCacheRelatedToPostId(postId: Long) =

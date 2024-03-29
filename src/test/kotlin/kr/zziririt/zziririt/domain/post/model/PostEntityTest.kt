@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FeatureSpec
 import io.kotest.matchers.shouldBe
 import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.domain.board.model.BoardType
+import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.model.MemberStatus
 import kr.zziririt.zziririt.domain.member.model.OAuth2Provider
@@ -12,7 +13,8 @@ import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 class PostEntityTest : FeatureSpec({
     val socialMember = SocialMemberEntity("email", "nickname", OAuth2Provider.TEST, "providerId", MemberRole.VIEWER, MemberStatus.NORMAL)
     val board = BoardEntity(socialMember = socialMember, boardName = "자유 게시판", boardUrl = "board Url", boardType = BoardType.ZZIRIRIT_BOARD)
-    val postFixture = PostEntity(board, socialMember, "title", "content")
+    val category = CategoryEntity(categoryName = "카테고리 이름")
+    val postFixture = PostEntity(board, socialMember, category = category,"title", "content")
 
     feature("Post Entity update 메서드 정상 동작 검증") {
         scenario("update 메서드를 사용하여 title과 content를 변경시 정상적으로 변경되어야 한다.") {

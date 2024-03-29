@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.api.post.dto.request
 
 import jakarta.validation.constraints.Size
 import kr.zziririt.zziririt.domain.board.model.BoardEntity
+import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import kr.zziririt.zziririt.domain.post.model.PostEntity
 import org.springframework.validation.annotation.Validated
@@ -12,10 +13,12 @@ data class CreatePostRequest(
     val title: String,
     @field:Size(min = 1, max = 20000, message = "게시글 내용의 글자수는 {min}자 이상 {max} 자 이하여야 합니다.")
     val content: String,
-    val privateStatus: Boolean
+    val categoryId: Long,
+    val privateStatus: Boolean,
 ) {
     lateinit var board: BoardEntity
     lateinit var member: SocialMemberEntity
+    lateinit var category: CategoryEntity
 
     fun board(board: BoardEntity): CreatePostRequest {
         this.board = board
@@ -27,9 +30,15 @@ data class CreatePostRequest(
         return this
     }
 
+    fun category(category: CategoryEntity): CreatePostRequest {
+        this.category = category
+        return this
+    }
+
     fun toEntity(): PostEntity = PostEntity(
         board = board,
         socialMember = member,
+        category = category,
         title = title,
         content = content,
         privateStatus = privateStatus

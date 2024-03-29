@@ -8,6 +8,8 @@ data class PostRowDto @QueryProjection constructor(
     val postId: Long,
     val zzirit: Long,
     val boardName: String,
+    val categoryId: Long,
+    val categoryName: String,
     val title: String,
     val memberId: Long,
     val nickname: String,

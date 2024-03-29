@@ -26,7 +26,6 @@ class PostSearchCacheRedisRepository(
     fun saveSearchPostCacheKeyByPostId(postId: Long, searchPostCacheKey: String) {
         kLogger.debug { "[+] saveSearchPostCacheKeyByPostId Start !!!" }
         val key = "${ConstCacheConfig.POST_SEARCH_TERM}PostId:$postId"
-        println(key)
 
         listOperations.leftPush(key, searchPostCacheKey)
     }
