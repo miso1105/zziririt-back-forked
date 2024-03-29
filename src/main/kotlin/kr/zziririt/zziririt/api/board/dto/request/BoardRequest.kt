@@ -13,10 +13,9 @@ data class BoardRequest (
     @field:NotBlank
     val boardUrl: String,
 ) {
-    fun to(socialMemberEntity: SocialMemberEntity, parent: BoardEntity?) = BoardEntity(
+    fun to(socialMemberEntity: SocialMemberEntity) = BoardEntity(
         boardName = boardName,
         socialMember = socialMemberEntity,
-        parent = parent,
         boardUrl = boardUrl.lowercase(),
         boardType = BoardType.ZZIRIRIT_BOARD
     )

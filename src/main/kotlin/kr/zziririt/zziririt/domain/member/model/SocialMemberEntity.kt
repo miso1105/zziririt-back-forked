@@ -41,7 +41,6 @@ class SocialMemberEntity(
     var defaultIcon: Long = 1L,
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    @Column(name = "member_icon")
     val memberIcon: MutableList<MemberIconEntity> = mutableListOf(),
 
     ) : BaseTimeEntity() {

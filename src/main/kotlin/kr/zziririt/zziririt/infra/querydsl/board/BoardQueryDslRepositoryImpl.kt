@@ -20,13 +20,11 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
         val content = queryFactory
             .select(
                 QBoardRowDto(
-                    board.parent.id,
                     board.id,
                     board.boardName
                 )
             )
             .from(board)
-            .orderBy(board.parent.id.asc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .fetch()
@@ -50,7 +48,6 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
             )
             .from(board)
             .where(board.boardType.eq(BoardType.STREAMER_BOARD))
-            .orderBy(board.parent.id.asc())
             .fetch()
     }
 
@@ -77,13 +74,11 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
         val content = queryFactory
             .select(
                 QBoardRowDto(
-                    board.parent.id,
                     board.id,
                     board.boardName
                 )
             ).from(board)
             .where(board.boardActStatus.eq(BoardActStatus.ACTIVE))
-            .orderBy(board.parent.id.asc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .fetch()
@@ -95,15 +90,4 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
         return PageImpl(content, pageable, count)
     }
 
-    override fun findChildBoards(boardId: Long): List<ChildBoardRowDto> {
-        return queryFactory.select(
-            QChildBoardRowDto(
-                board.id,
-                board.boardName
-            )
-        ).from(board)
-            .where(board.parent.id.eq(boardId))
-            .orderBy(board.boardName.asc())
-            .fetch()
-    }
 }

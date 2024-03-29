@@ -1,11 +1,9 @@
 package kr.zziririt.zziririt.api.board.controller
 
 import jakarta.validation.Valid
-import kr.zziririt.zziririt.api.board.dto.request.BoardRequest
-import kr.zziririt.zziririt.api.board.dto.request.StreamerBoardApplicationRequest
-import kr.zziririt.zziririt.api.board.dto.request.StreamerBoardRequest
-import kr.zziririt.zziririt.api.board.dto.request.SubscribeBoardRequest
+import kr.zziririt.zziririt.api.board.dto.request.*
 import kr.zziririt.zziririt.api.board.service.BoardService
+import kr.zziririt.zziririt.api.board.service.CategoryService
 import kr.zziririt.zziririt.api.dto.CommonResponse
 import kr.zziririt.zziririt.global.responseEntity
 import kr.zziririt.zziririt.infra.security.UserPrincipal
@@ -21,7 +19,8 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/api/v1/boards")
 class BoardController(
-    private val boardService: BoardService
+    private val boardService: BoardService,
+    private val categoryService: CategoryService
 ) {
     @PostMapping("/apply")
     fun createStreamerApply(
@@ -60,17 +59,6 @@ class BoardController(
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         boardService.createStreamerBoard(streamerBoardRequest, userPrincipal)
-        return responseEntity(HttpStatus.CREATED)
-    }
-
-    @PostMapping("/{boardId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    fun createChildBoard(
-        @PathVariable boardId: Long,
-        @Valid @RequestBody boardRequest: BoardRequest,
-        @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.createChildBoard(boardId, boardRequest, userPrincipal)
         return responseEntity(HttpStatus.CREATED)
     }
 
@@ -127,6 +115,28 @@ class BoardController(
     @GetMapping("/streamer")
     fun getStreamers() = responseEntity(HttpStatus.OK) { boardService.getStreamers() }
 
-    @GetMapping("/{boardId}/child")
-    fun getChildBoards(@PathVariable boardId: Long) = responseEntity(HttpStatus.OK) { boardService.getChildBoards(boardId) }
+    @GetMapping("/categories/{categoryId}")
+    fun getCategoryById(
+        @PathVariable categoryId: Long
+    ) = responseEntity(HttpStatus.OK) { categoryService.getCategoryById(categoryId) }
+
+    @GetMapping("/categories")
+    fun getAllCategories() = responseEntity(HttpStatus.OK) { categoryService.getAllCategories() }
+
+    @PostMapping("/{boardId}")
+    fun addCategoryToBoard(
+        @PathVariable boardId:Long,
+        @RequestBody request: CreateCategoryRequest
+    ) = responseEntity(HttpStatus.OK) { boardService.addCategoryToBoard(boardId, request) }
+
+    @GetMapping(("/{boardId}"))
+    fun getCategoriesByBoardId(
+        @PathVariable boardId: Long
+    ) = responseEntity(HttpStatus.OK) { boardService.getCategoriesByBoardId(boardId) }
+
+    @PutMapping("/categories/{categoryId}")
+    fun updateCategoryName(
+        @PathVariable categoryId: Long,
+        @RequestBody request: UpdateCategoryNameRequest
+    ) = responseEntity(HttpStatus.OK) { categoryService.updateCategoryById(categoryId, request)}
 }

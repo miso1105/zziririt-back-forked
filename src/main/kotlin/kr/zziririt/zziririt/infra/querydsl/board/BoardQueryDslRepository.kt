@@ -15,5 +15,4 @@ interface BoardQueryDslRepository {
 
     fun findActiveStatusBoards(pageable: Pageable): Page<BoardRowDto>
 
-    fun findChildBoards(boardId: Long): List<ChildBoardRowDto>
 }

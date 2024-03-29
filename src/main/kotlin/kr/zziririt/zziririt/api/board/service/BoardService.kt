@@ -1,10 +1,11 @@
 package kr.zziririt.zziririt.api.board.service
 
-import kr.zziririt.zziririt.api.board.dto.request.BoardRequest
-import kr.zziririt.zziririt.api.board.dto.request.StreamerBoardApplicationRequest
-import kr.zziririt.zziririt.api.board.dto.request.StreamerBoardRequest
-import kr.zziririt.zziririt.api.board.dto.request.SubscribeBoardRequest
+import kr.zziririt.zziririt.api.board.dto.request.*
+import kr.zziririt.zziririt.domain.board.model.BoardCategoryEntity
+import kr.zziririt.zziririt.domain.board.model.CategoryEntity
+import kr.zziririt.zziririt.domain.board.repository.BoardCategoryRepository
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
+import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
 import kr.zziririt.zziririt.domain.board.repository.StreamerBoardApplicationRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
@@ -12,7 +13,6 @@ import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
 import kr.zziririt.zziririt.infra.aws.S3Service
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
-import kr.zziririt.zziririt.infra.querydsl.board.ChildBoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
 import kr.zziririt.zziririt.infra.security.UserPrincipal
 import org.springframework.data.domain.Page
@@ -30,6 +30,8 @@ class BoardService(
     private val boardRepository: BoardRepository,
     private val streamerBoardApplicationRepository: StreamerBoardApplicationRepository,
     private val s3Service: S3Service,
+    private val categoryRepository: CategoryRepository,
+    private val boardCategoryRepository: BoardCategoryRepository
 ) {
     @Transactional
     fun createStreamerBoardApplication(
@@ -71,21 +73,12 @@ class BoardService(
         findStreamerForm.uploadImage(imageUrl.toString())
     }
 
+    @Transactional
     fun createBoard(boardRequest: BoardRequest, userPrincipal: UserPrincipal) {
-        val findMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId) ?: throw RestApiException(
-            ErrorCode.MODEL_NOT_FOUND
-        )
-        boardRepository.save(boardRequest.to(socialMemberEntity = findMember, parent = null))
-    }
+        val findMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
+            ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
 
-    fun createChildBoard(boardId: Long, boardRequest: BoardRequest, userPrincipal: UserPrincipal) {
-        val findMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId) ?: throw RestApiException(
-            ErrorCode.MODEL_NOT_FOUND
-        )
-        val findParentBoard =
-            boardRepository.findByIdOrNull(boardId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
-
-        boardRepository.save(boardRequest.to(socialMemberEntity = findMember, parent = findParentBoard))
+        boardRepository.save(boardRequest.to(socialMemberEntity = findMember))
     }
 
     @Transactional
@@ -159,11 +152,39 @@ class BoardService(
         val boardOwner = socialMemberRepository.findByIdOrNull(streamerBoardRequest.boardOwnerId)
             ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
 
-        boardRepository.save(streamerBoardRequest.to(boardOwner))
+        val board = boardRepository.save(streamerBoardRequest.to(boardOwner))
 
+        val categoryNames = listOf("공지 사항", "잡담 게시판")
+        val categories = categoryNames.map { CategoryEntity(it) }
+        categories.forEach {
+            categoryRepository.save(it)
+            boardCategoryRepository.save(BoardCategoryEntity(board, it))
+        }
     }
 
-    fun getChildBoards(boardId: Long): List<ChildBoardRowDto> {
-        return boardRepository.findChildBoards(boardId)
+    @Transactional
+    fun addCategoryToBoard(boardId: Long, request: CreateCategoryRequest) {
+
+        val boardCheck = boardRepository.findByIdOrNull(boardId)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        val category = categoryRepository.save(request.toEntity())
+
+        val categoryCheck = categoryRepository.findByIdOrNull(category.id)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        val boardCategory = BoardCategoryEntity(boardCheck, categoryCheck)
+
+        boardCategoryRepository.save(boardCategory)
     }
+
+    fun getCategoriesByBoardId(boardId: Long): List<BoardCategoryResponse> {
+        val board = boardRepository.findByIdOrNull(boardId)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        val boardCategories = boardCategoryRepository.findByBoardId(board.id!!)
+
+        return boardCategories.map { BoardCategoryResponse.from(it) }
+    }
+
 }

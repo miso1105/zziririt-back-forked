@@ -12,17 +12,13 @@ import org.hibernate.annotations.SQLRestriction
 @SQLRestriction(value = "is_deleted = false")
 class BoardEntity(
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    val parent: BoardEntity? = null,
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "social_member_id", nullable = false)
     var socialMember: SocialMemberEntity,
 
     @Column(name = "board_name", nullable = false)
     var boardName: String,
 
-    @Column(name = "board_url", nullable = false)
+    @Column(name = "board_url", nullable = false, unique = true)
     var boardUrl: String,
 
     @Enumerated(EnumType.STRING)
@@ -32,6 +28,9 @@ class BoardEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "board_act_status")
     var boardActStatus: BoardActStatus = BoardActStatus.ACTIVE,
+
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val boardCategory: MutableList<BoardCategoryEntity> = mutableListOf()
 ) : BaseEntity() {
 
     @Id
