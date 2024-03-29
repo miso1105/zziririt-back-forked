@@ -1,8 +1,8 @@
 package kr.zziririt.zziririt.api.post.dto.response
 
+import kr.zziririt.zziririt.api.comment.dto.CommentResponse
 import kr.zziririt.zziririt.domain.post.model.PostEntity
 import java.time.LocalDateTime
-
 
 data class PostResponse(
     val postId: Long,
@@ -20,10 +20,16 @@ data class PostResponse(
     val permissionToDeleteStatus: Boolean,
     val zziritCount: Long,
     val hit: Long,
+    val commentResponses: List<CommentResponse>?,
     val createdAt: LocalDateTime,
 ) {
     companion object {
-        fun of(postEntity: PostEntity, permissionToUpdateStatus: Boolean, permissionToDeleteStatus: Boolean): PostResponse = PostResponse(
+        fun of(
+            postEntity: PostEntity,
+            permissionToUpdateStatus: Boolean,
+            permissionToDeleteStatus: Boolean,
+            comments: List<CommentResponse>?
+        ): PostResponse = PostResponse(
             postId = postEntity.id!!,
             title = postEntity.title,
             content = postEntity.content,
@@ -39,6 +45,7 @@ data class PostResponse(
             permissionToDeleteStatus = permissionToDeleteStatus,
             zziritCount = postEntity.zziritCount,
             hit = postEntity.hit,
+            commentResponses = comments,
             createdAt = postEntity.createdAt
         )
     }

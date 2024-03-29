@@ -7,7 +7,7 @@ import kr.zziririt.zziririt.domain.post.model.PostEntity
 import org.springframework.validation.annotation.Validated
 
 @Validated
-data class CommentDto (
+data class CommentRequest (
     @field:Size(min = 1, max = 500, message = "댓글의 글자 수는 {min}자 이상 {max}자 이하여야 합니다.")
     val content: String,
     val privateStatus: Boolean

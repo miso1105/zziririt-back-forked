@@ -1,14 +1,19 @@
 package kr.zziririt.zziririt.api.post.service
 
+import kr.zziririt.zziririt.api.comment.service.CommentService
 import kr.zziririt.zziririt.api.post.dto.PostSearchCondition
 import kr.zziririt.zziririt.api.post.dto.request.CreatePostRequest
 import kr.zziririt.zziririt.api.post.dto.request.UpdatePostRequest
 import kr.zziririt.zziririt.api.post.dto.response.PostResponse
+import kr.zziririt.zziririt.api.post.dto.response.ZziritStatusResponse
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
 import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
 import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.domain.post.repository.PostRepository
+import kr.zziririt.zziririt.domain.zzirit.model.ZziritEntity
+import kr.zziririt.zziririt.domain.zzirit.model.ZziritEntityType
+import kr.zziririt.zziririt.domain.zzirit.repository.ZziritRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
@@ -20,6 +25,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 @Service
@@ -27,7 +33,9 @@ class PostService(
     private val postRepository: PostRepository,
     private val socialMemberRepository: SocialMemberRepository,
     private val boardRepository: BoardRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val zziritRepository: ZziritRepository,
+    private val commentService: CommentService
 ) {
     @Transactional
     fun createPost(
@@ -48,7 +56,7 @@ class PostService(
             .toEntity().let {
                 postRepository.save(it)
             }.let {
-                PostResponse.of(it, true, true)
+                PostResponse.of(it, true, true, null)
             }
     }
 
@@ -79,7 +87,9 @@ class PostService(
 
         findPost.incrementHit()
 
-        return PostResponse.of(findPost, permissionToUpdateStatus, permissionToDeleteStatus)
+        val findComments = commentService.getComments(userPrincipal, postId)
+
+        return PostResponse.of(findPost, permissionToUpdateStatus, permissionToDeleteStatus, findComments)
     }
 
     @Transactional(readOnly = true)
@@ -187,4 +197,36 @@ class PostService(
 
         postRepository.delete(findPost)
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun toggleZzirit(postId: Long, userPrincipal: UserPrincipal): ZziritStatusResponse {
+        val findPost = postRepository.findByIdOrNull(postId)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        var findZzirit = zziritRepository.findZziritByMemberIdAndPostIdOrNull(userPrincipal.memberId, postId)
+
+        if (findZzirit == null) {
+            val findSocialMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
+                ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+            findPost.incrementZzirit()
+
+            return ZziritStatusResponse.of(zziritRepository.save(
+                ZziritEntity(
+                    socialMember = findSocialMember,
+                    entityId = postId,
+                    zziritEntityType = ZziritEntityType.POST
+                )
+            ))
+        }
+
+        if (findZzirit.toggleZzirit()) {
+            findPost.incrementZzirit()
+        } else {
+            findPost.decrementZzirit()
+        }
+
+        return ZziritStatusResponse.of(findZzirit)
+    }
+
+    @Transactional(readOnly = true)
+    fun countZziritByPostId(postId: Long) = zziritRepository.countZziritByPostId(postId)
 }

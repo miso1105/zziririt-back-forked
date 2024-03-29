@@ -40,6 +40,8 @@ class CommentEntity(
 
     fun incrementZzirit() = this.zziritCount++
 
+    fun decrementZzirit() = this.zziritCount--
+
     fun togglePrivateStatus() {
         this.privateStatus = !privateStatus
     }

@@ -1,7 +1,7 @@
 package kr.zziririt.zziririt.api.comment.controller
 
 import jakarta.validation.Valid
-import kr.zziririt.zziririt.api.comment.dto.CommentDto
+import kr.zziririt.zziririt.api.comment.dto.CommentRequest
 import kr.zziririt.zziririt.api.comment.service.CommentService
 import kr.zziririt.zziririt.api.dto.CommonResponse
 import kr.zziririt.zziririt.global.responseEntity
@@ -19,10 +19,10 @@ class CommentController(
     @PostMapping
     fun createComment(
         @PathVariable postId: Long,
-        @Valid @RequestBody commentDto: CommentDto,
+        @Valid @RequestBody commentRequest: CommentRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        commentService.createComment(postId, commentDto, userPrincipal)
+        commentService.createComment(postId, commentRequest, userPrincipal)
         return responseEntity(HttpStatus.CREATED)
     }
 
@@ -30,10 +30,10 @@ class CommentController(
     fun updateComment(
         @PathVariable postId: Long,
         @PathVariable commentId: Long,
-        @Valid @RequestBody commentDto: CommentDto,
+        @Valid @RequestBody commentRequest: CommentRequest,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        commentService.updateComment(postId, commentId, commentDto, userPrincipal)
+        commentService.updateComment(postId, commentId, commentRequest, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
@@ -46,11 +46,14 @@ class CommentController(
         return responseEntity(HttpStatus.NO_CONTENT)
     }
 
-    @PostMapping("/{commentId}")
-    fun incrementZzrit(
+    @PostMapping("/{commentId}/zzirit")
+    fun toggleZzirit(
+        @PathVariable commentId: Long,
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ) = responseEntity(HttpStatus.OK) { commentService.toggleZzirit(commentId, userPrincipal) }
+
+    @GetMapping("/{commentId}/zzirit")
+    fun countZziritByPostId(
         @PathVariable commentId: Long
-    ): ResponseEntity<CommonResponse<Nothing>> {
-        commentService.incrementZzirit(commentId)
-        return responseEntity(HttpStatus.CREATED)
-    }
+    ) = responseEntity(HttpStatus.OK) { commentService.countZziritByCommentId(commentId) }
 }

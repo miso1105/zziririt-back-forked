@@ -55,6 +55,8 @@ class PostEntity(
 
     fun incrementZzirit() = this.zziritCount++
 
+    fun decrementZzirit() = this.zziritCount--
+
     fun incrementHit() = this.hit++
 
     fun togglePrivateStatus() {

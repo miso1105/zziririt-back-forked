@@ -89,4 +89,15 @@ class PostController(
         postService.deletePost(postId, userPrincipal)
         return responseEntity(HttpStatus.NO_CONTENT)
     }
+
+    @PostMapping("/v1/boards/{boardId}/posts/{postId}/zzirit")
+    fun toggleZzirit(
+        @PathVariable postId: Long,
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ) = responseEntity(HttpStatus.OK) { postService.toggleZzirit(postId, userPrincipal) }
+
+    @GetMapping("/v1/boards/{boardId}/posts/{postId}/zzirit")
+    fun countZziritByPostId(
+        @PathVariable postId: Long
+    ) = responseEntity(HttpStatus.OK) { postService.countZziritByPostId(postId) }
 }
