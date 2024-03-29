@@ -1,5 +1,6 @@
 package kr.zziririt.zziririt.api.board.controller
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.validation.Valid
 import kr.zziririt.zziririt.api.board.dto.request.*
 import kr.zziririt.zziririt.api.board.service.BoardService
@@ -24,10 +25,12 @@ class BoardController(
 ) {
     @PostMapping("/apply")
     fun createStreamerApply(
-        @RequestPart("image") multipartFile: List<MultipartFile>,
-        @Valid @RequestPart streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
+        @RequestParam("image") multipartFile: List<MultipartFile>,
+        @RequestParam request: String,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
+        val mapper = jacksonObjectMapper()
+        val streamerBoardApplicationRequest = mapper.readValue(request, StreamerBoardApplicationRequest::class.java)
         boardService.createStreamerBoardApplication(multipartFile, streamerBoardApplicationRequest, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }

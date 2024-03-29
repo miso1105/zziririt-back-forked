@@ -61,6 +61,8 @@ val kotestExtensionVersion = "1.1.3"
 
 val mockkVersion = "1.13.8"
 
+val redissonVersion = "3.27.2"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -68,6 +70,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$swaggerVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -78,6 +81,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
     //redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.redisson:redisson:$redissonVersion")
     //querydsl
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")

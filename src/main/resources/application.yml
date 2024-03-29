@@ -102,6 +102,22 @@ spring:
             user-info-uri: ${OAUTH_NAVER_USER_INFO_URI}
             user-name-attribute: ${OAUTH_NAVER_USER_NAME_ATTRIBUTE}
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP.NAME}
+    password: ${SMTP.PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
 auth:
   jwt:
     issuer: ${AUTH_JWT_ISSUER}
@@ -131,3 +147,4 @@ logging:
         orm:
           jdbc:
             bind: trace
+
