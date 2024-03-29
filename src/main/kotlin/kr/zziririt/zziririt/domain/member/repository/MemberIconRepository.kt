@@ -10,10 +10,14 @@ interface MemberIconRepository {
 
     fun save(entity: MemberIconEntity): MemberIconEntity
 
+    fun delete(entity: MemberIconEntity)
+
     fun findByIdOrNull(id: Long): MemberIconEntity?
 
     fun getMyIcons(pageable: Pageable): PageImpl<GetMyIconsDto>
 
     fun existsByMemberIdAndIconId(memberId: Long, iconId: Long): Boolean
+
+    fun findByMemberIdAndIconId(memberId:Long, iconId:Long) : MemberIconEntity?
 
 }

@@ -5,7 +5,7 @@ import kr.zziririt.zziririt.domain.member.model.MemberStatus
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import java.time.LocalDateTime
 
-data class GetMemberResponse(
+data class GetMyInfoResponse(
     val nickname: String,
     val memberStatus: MemberStatus,
     val lastLogin: LocalDateTime,
@@ -15,8 +15,8 @@ data class GetMemberResponse(
             socialMemberEntity: SocialMemberEntity,
             loginHistoryEntity: LoginHistoryEntity
 
-        ): GetMemberResponse {
-            return GetMemberResponse(
+        ): GetMyInfoResponse {
+            return GetMyInfoResponse(
                 nickname = socialMemberEntity.nickname,
                 memberStatus = socialMemberEntity.memberStatus,
                 lastLogin = loginHistoryEntity.createdAt

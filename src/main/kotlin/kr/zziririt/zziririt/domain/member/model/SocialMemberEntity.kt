@@ -68,13 +68,18 @@ class SocialMemberEntity(
 
     fun pointMinus(point: Long) {
         this.point -= point
+        verifyPoint(this.point)
+    }
+
+    fun pointPlus(point: Long) {
+        this.point += point
     }
 
     fun changeDefaultIcon(iconId: Long) {
         this.defaultIcon = iconId
     }
 
-    fun verifyPoint(point: Long): Boolean {
+    private fun verifyPoint(point: Long): Boolean {
         if (this.point > 0) {
             return true
         }

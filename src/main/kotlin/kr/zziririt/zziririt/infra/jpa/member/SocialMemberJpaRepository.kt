@@ -10,4 +10,5 @@ interface SocialMemberJpaRepository : JpaRepository<SocialMemberEntity, Long> {
     fun existsByProviderAndProviderId(provider: OAuth2Provider, providerId: String): Boolean
 
     fun findByProviderAndProviderId(provider: OAuth2Provider, providerId: String): SocialMemberEntity
+
 }

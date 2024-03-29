@@ -9,11 +9,12 @@ import io.mockk.every
 import io.mockk.mockk
 import kr.zziririt.zziririt.api.member.controller.MemberController
 import kr.zziririt.zziririt.api.member.dto.request.AdjustRoleRequest
-import kr.zziririt.zziririt.api.member.dto.response.GetMemberResponse
+import kr.zziririt.zziririt.api.member.dto.response.GetMyInfoResponse
 import kr.zziririt.zziririt.domain.member.model.*
 import kr.zziririt.zziririt.domain.member.repository.LoginHistoryRepository
 import kr.zziririt.zziririt.domain.member.repository.MemberIconRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
+import kr.zziririt.zziririt.domain.report.repository.BannedHistoryRepository
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
 import kr.zziririt.zziririt.infra.security.UserPrincipal
@@ -42,7 +43,8 @@ class MemberServiceTest() : BehaviorSpec({
     val memberRepository = mockk<SocialMemberRepository>()
     val memberIconRepository = mockk<MemberIconRepository>()
     val loginHistoryRepository = mockk<LoginHistoryRepository>()
-    val memberService = MemberService(memberRepository, memberIconRepository, loginHistoryRepository)
+    val bannedHistoryRepository = mockk<BannedHistoryRepository>()
+    val memberService = MemberService(memberRepository, memberIconRepository, loginHistoryRepository, bannedHistoryRepository)
 
     val userPrincipal = UserPrincipal(1L, "email", roles = setOf(MemberRole.ADMIN.name), "providerId")
 
@@ -131,7 +133,7 @@ class MemberServiceTest() : BehaviorSpec({
             every { loginHistoryRepository.findTopByMemberIdOrderByCreatedAtDesc(testMember) } returns loginHistoryEntity
 
             Then("유저 정보가 반환되어야 한다.") {
-                GetMemberResponse(
+                GetMyInfoResponse(
                     nickname = testMember.nickname,
                     memberStatus = testMember.memberStatus,
                     lastLogin = loginHistoryEntity.createdAt

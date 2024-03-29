@@ -58,10 +58,9 @@ class BoardController(
     @PostMapping("/streamer")
     @PreAuthorize("hasRole('ADMIN')")
     fun createStreamerBoard(
-        @Valid @RequestBody streamerBoardRequest: StreamerBoardRequest,
-        @AuthenticationPrincipal userPrincipal: UserPrincipal
+        @Valid @RequestBody streamerBoardRequest: StreamerBoardRequest
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.createStreamerBoard(streamerBoardRequest, userPrincipal)
+        boardService.createStreamerBoard(streamerBoardRequest)
         return responseEntity(HttpStatus.CREATED)
     }
 

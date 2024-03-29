@@ -10,6 +10,7 @@ import kr.zziririt.zziririt.infra.security.UserPrincipal
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -20,18 +21,21 @@ class IconProductController(
 ) {
 
     @PostMapping("/registration")
+    @PreAuthorize("hasRole('ADMIN')")
     fun registerIconProduct(
         @RequestBody request: IconProductRequest
     ) = responseEntity(HttpStatus.OK) { iconProductService.registerIconProduct(request) }
 
 
     @PutMapping("/{iconProductId}")
+    @PreAuthorize("hasRole('ADMIN')")
     fun changeSaleStatus(
         @PathVariable iconProductId: Long,
         @RequestBody request: ChangeSaleStatusRequest
     ) = responseEntity(HttpStatus.OK) { iconProductService.changeStatus(iconProductId, request) }
 
     @DeleteMapping("/{iconProductId}")
+    @PreAuthorize("hasRole('ADMIN')")
     fun deleteIconProduct(
         @PathVariable iconProductId: Long,
     ) = responseEntity(HttpStatus.OK) { iconProductService.deleteIconProduct(iconProductId) }

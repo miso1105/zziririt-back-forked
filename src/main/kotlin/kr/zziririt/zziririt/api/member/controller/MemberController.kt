@@ -2,6 +2,7 @@ package kr.zziririt.zziririt.api.member.controller
 
 import jakarta.validation.Valid
 import kr.zziririt.zziririt.api.member.dto.request.AdjustRoleRequest
+import kr.zziririt.zziririt.api.member.dto.request.ChangeMemberPointRequest
 import kr.zziririt.zziririt.api.member.dto.request.SelectMyIconRequest
 import kr.zziririt.zziririt.api.member.dto.request.SetBoardManagerRequest
 import kr.zziririt.zziririt.api.member.service.MemberService
@@ -19,7 +20,7 @@ class MemberController(
 ) {
 
     @GetMapping("/myinfo")
-    fun getMember(
+    fun getMyInfo(
         @AuthenticationPrincipal principal: UserPrincipal
     ) = responseEntity(HttpStatus.OK) { memberService.getMember(principal) }
 
@@ -55,6 +56,11 @@ class MemberController(
     fun selectDefaultIcon(
         @AuthenticationPrincipal userPrincipal: UserPrincipal,
         @RequestBody request: SelectMyIconRequest,
-    ) = responseEntity(HttpStatus.OK) { memberService.selectMyIcon(userPrincipal, request)}
+    ) = responseEntity(HttpStatus.OK) { memberService.selectMyIcon(userPrincipal, request) }
 
+    @PutMapping("/pointchange")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun changeMemberPoint(
+        @RequestBody request: ChangeMemberPointRequest
+    ) = responseEntity(HttpStatus.OK) { memberService.changeMemberPoint(request) }
 }

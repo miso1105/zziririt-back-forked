@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class SocialMemberRepositoryImpl(
     private val memberJpaRepository: SocialMemberJpaRepository,
-    private val memberQueryDslRepository: SocialMemberQueryDslRepository
+    private val memberQueryDslRepository: SocialMemberQueryDslRepository,
 ) : SocialMemberRepository {
     override fun findByEmail(email: String): SocialMemberEntity? = memberJpaRepository.findByEmail(email)
 

@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface MemberIconJpaRepository : JpaRepository<MemberIconEntity, Long> {
 
     fun existsByMemberIdAndIconId(memberId: Long, iconId: Long): Boolean
+
+    fun findByMemberIdAndIconId(memberId: Long, iconId: Long): MemberIconEntity?
 }

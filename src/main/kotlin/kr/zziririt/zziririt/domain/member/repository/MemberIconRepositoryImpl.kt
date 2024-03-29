@@ -17,6 +17,8 @@ class MemberIconRepositoryImpl(
 ) : MemberIconRepository {
     override fun save(entity: MemberIconEntity): MemberIconEntity = memberIconJpaRepository.save(entity)
 
+    override fun delete(entity: MemberIconEntity) = memberIconJpaRepository.delete(entity)
+
     override fun findByIdOrNull(id: Long): MemberIconEntity? = memberIconJpaRepository.findByIdOrNull(id)
     override fun getMyIcons(pageable: Pageable): PageImpl<GetMyIconsDto> =
         memberIconQueryDslRepository.getMyIcons(pageable)
@@ -24,4 +26,6 @@ class MemberIconRepositoryImpl(
     override fun existsByMemberIdAndIconId(memberId: Long, iconId: Long): Boolean =
         memberIconJpaRepository.existsByMemberIdAndIconId(memberId, iconId)
 
+    override fun findByMemberIdAndIconId(memberId: Long, iconId: Long): MemberIconEntity? =
+        memberIconJpaRepository.findByMemberIdAndIconId(memberId, iconId)
 }

@@ -22,8 +22,13 @@ class StreamerBoardApplicationEntity(
     var applyBoardName: String,
 
     @Column(name = "streamer_picture")
-    var certificationStreamerPicture: String? = null
-):BaseEntity() {
+    var certificationStreamerPicture: String? = null,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "streamer_board_application_status")
+    var streamerBoardApplicationStatus: StreamerBoardApplicationStatus = StreamerBoardApplicationStatus.WAITING
+
+) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
@@ -35,5 +40,9 @@ class StreamerBoardApplicationEntity(
 
     fun uploadImage(streamerPictureUrl: String) {
         this.certificationStreamerPicture = streamerPictureUrl
+    }
+
+    fun updateApplicationStatus(request: StreamerBoardApplicationStatus) {
+        this.streamerBoardApplicationStatus = request
     }
 }
