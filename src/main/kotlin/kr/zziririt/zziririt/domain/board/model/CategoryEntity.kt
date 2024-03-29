@@ -5,6 +5,9 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "category")
 class CategoryEntity (
+    @Column(name = "board_id")
+    val boardId: Long,
+
     @Column(name = "category_name")
     var categoryName: String
 ){

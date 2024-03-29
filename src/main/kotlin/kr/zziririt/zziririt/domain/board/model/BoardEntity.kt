@@ -29,8 +29,8 @@ class BoardEntity(
     @Column(name = "board_act_status")
     var boardActStatus: BoardActStatus = BoardActStatus.ACTIVE,
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    val boardCategory: MutableList<BoardCategoryEntity> = mutableListOf()
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val categories : MutableList<CategoryEntity> = mutableListOf()
 ) : BaseEntity() {
 
     @Id
