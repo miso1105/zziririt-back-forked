@@ -3,11 +3,9 @@ package kr.zziririt.zziririt.infra.querydsl.board
 import kr.zziririt.zziririt.domain.board.model.BoardActStatus
 import kr.zziririt.zziririt.domain.board.model.BoardType
 import kr.zziririt.zziririt.domain.board.model.QBoardEntity
+import kr.zziririt.zziririt.domain.board.model.QCategoryEntity
 import kr.zziririt.zziririt.domain.post.model.QPostEntity
 import kr.zziririt.zziririt.infra.querydsl.QueryDslSupport
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -15,9 +13,10 @@ import java.time.LocalDateTime
 class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
     private val board = QBoardEntity.boardEntity
     private val post = QPostEntity.postEntity
+    private val category = QCategoryEntity.categoryEntity
 
-    override fun findByPageable(pageable: Pageable): Page<BoardRowDto> {
-        val content = queryFactory
+    override fun findBoards(): List<BoardRowDto> {
+        return queryFactory
             .select(
                 QBoardRowDto(
                     board.id,
@@ -25,17 +24,10 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
                 )
             )
             .from(board)
-            .offset(pageable.offset)
-            .limit(pageable.pageSize.toLong())
+            .orderBy(board.id.asc())
             .fetch()
-
-        val count = queryFactory
-            .select(board.count())
-            .from(board)
-            .fetchOne() ?: 0L
-
-        return PageImpl(content, pageable, count)
     }
+
 
     override fun findStreamers(): List<StreamerBoardRowDto> {
         return queryFactory
@@ -48,6 +40,7 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
             )
             .from(board)
             .where(board.boardType.eq(BoardType.STREAMER_BOARD))
+            .orderBy(board.id.asc())
             .fetch()
     }
 
@@ -58,7 +51,7 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
             .from(post)
             .leftJoin(board)
             .on(board.id.eq(post.board.id))
-            .where(post.modifiedAt.loe(checkInactiveDate))
+            .where(post.modifiedAt.loe(checkInactiveDate), board.boardType.eq(BoardType.STREAMER_BOARD))
             .fetch()
     }
 
@@ -70,8 +63,8 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
             .execute()
     }
 
-    override fun findActiveStatusBoards(pageable: Pageable): Page<BoardRowDto> {
-        val content = queryFactory
+    override fun findActiveStatusBoards(): List<BoardRowDto> {
+        return queryFactory
             .select(
                 QBoardRowDto(
                     board.id,
@@ -79,15 +72,7 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
                 )
             ).from(board)
             .where(board.boardActStatus.eq(BoardActStatus.ACTIVE))
-            .offset(pageable.offset)
-            .limit(pageable.pageSize.toLong())
+            .orderBy(board.id.asc())
             .fetch()
-
-        val count = queryFactory.select(board.count())
-            .from(board)
-            .fetchOne() ?: 0L
-
-        return PageImpl(content, pageable, count)
     }
-
 }

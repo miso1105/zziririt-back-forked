@@ -1,4 +1,4 @@
-package kr.zziririt.zziririt.api.board.dto.request
+package kr.zziririt.zziririt.api.board.dto.response
 
 import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 

@@ -1,6 +1,6 @@
 package kr.zziririt.zziririt.api.board.service
 
-import kr.zziririt.zziririt.api.board.dto.request.CategoryResponse
+import kr.zziririt.zziririt.api.board.dto.response.CategoryResponse
 import kr.zziririt.zziririt.api.board.dto.request.UpdateCategoryNameRequest
 import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode

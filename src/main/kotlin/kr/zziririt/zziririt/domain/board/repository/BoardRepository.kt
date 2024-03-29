@@ -3,8 +3,6 @@ package kr.zziririt.zziririt.domain.board.repository
 import kr.zziririt.zziririt.domain.board.model.BoardEntity
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 
 
 interface BoardRepository {
@@ -18,7 +16,7 @@ interface BoardRepository {
 
     fun findAllById(idList: List<Long>): List<BoardEntity>
 
-    fun findByPageable(pageable: Pageable): Page<BoardRowDto>
+    fun findBoards(): List<BoardRowDto>
 
     fun existsBoardEntityByBoardName(boardName: String): Boolean
 
@@ -28,6 +26,8 @@ interface BoardRepository {
 
     fun updateBoardStatusToInactive(inactiveBoardIdList: List<Long>)
 
-    fun findActiveStatusBoards(pageable: Pageable): Page<BoardRowDto>
+    fun findActiveStatusBoards(): List<BoardRowDto>
+
+    fun findByBoardUrl(boardUrl: String): BoardEntity
 
 }

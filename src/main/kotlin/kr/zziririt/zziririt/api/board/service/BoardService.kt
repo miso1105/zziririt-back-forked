@@ -1,6 +1,8 @@
 package kr.zziririt.zziririt.api.board.service
 
 import kr.zziririt.zziririt.api.board.dto.request.*
+import kr.zziririt.zziririt.api.board.dto.response.BoardResponse
+import kr.zziririt.zziririt.api.board.dto.response.BoardUrlSearchResponse
 import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
 import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
@@ -13,8 +15,6 @@ import kr.zziririt.zziririt.infra.aws.S3Service
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
 import kr.zziririt.zziririt.infra.security.UserPrincipal
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -32,8 +32,8 @@ class BoardService(
 ) {
     @Transactional
     fun createStreamerBoardApplication(
-        multipartFile: List<MultipartFile>,
         streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
+        multipartFile: List<MultipartFile>,
         userPrincipal: UserPrincipal
     ) {
         val findSocialMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
@@ -43,11 +43,12 @@ class BoardService(
             throw RestApiException(ErrorCode.DUPLICATE_MODEL_NAME)
         }
 
-        val saveForm =
-            streamerBoardApplicationRepository.save(streamerBoardApplicationRequest.to(socialMemberEntity = findSocialMember))
         val imageUrl = s3Service.uploadFiles(dir = "streamer_image", files = multipartFile)
-        saveForm.uploadImage(imageUrl.toString())
-
+        imageUrl.forEach {
+            val streamerBoardApplication = streamerBoardApplicationRequest.to(socialMemberEntity = findSocialMember)
+            streamerBoardApplication.uploadImage(it)
+            streamerBoardApplicationRepository.save(streamerBoardApplication)
+        }
     }
 
     @Transactional
@@ -56,18 +57,22 @@ class BoardService(
         multipartFile: List<MultipartFile>,
         userPrincipal: UserPrincipal
     ) {
-        socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
+        val findMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
-        val findStreamerForm = streamerBoardApplicationRepository.findByIdOrNull(userPrincipal.memberId)
+        val findStreamerApplication = streamerBoardApplicationRepository.findByIdOrNull(userPrincipal.memberId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
-        findStreamerForm.update(
+        findStreamerApplication.update(
             applyUrl = streamerBoardApplicationRequest.applyUrl,
             applyBoardName = streamerBoardApplicationRequest.applyBoardName
         )
 
         val imageUrl = s3Service.uploadFiles(dir = "update_streamer_image", files = multipartFile)
-        findStreamerForm.uploadImage(imageUrl.toString())
+        imageUrl.forEach {
+            val streamerBoardApplication = streamerBoardApplicationRequest.to(socialMemberEntity = findMember)
+            streamerBoardApplication.uploadImage(it)
+            streamerBoardApplicationRepository.save(streamerBoardApplication)
+        }
     }
 
     @Transactional
@@ -125,12 +130,12 @@ class BoardService(
         socialMemberRepository.save(findSocialMember)
     }
 
-    fun getBoards(pageable: Pageable): Page<BoardRowDto> {
-        return boardRepository.findByPageable(pageable)
+    fun getBoards(): List<BoardRowDto> {
+        return boardRepository.findBoards()
     }
 
-    fun getActiveStatusBoards(pageable: Pageable): Page<BoardRowDto> {
-        return boardRepository.findActiveStatusBoards(pageable)
+    fun getActiveStatusBoards(): List<BoardRowDto> {
+        return boardRepository.findActiveStatusBoards()
     }
 
     fun getStreamers(): List<StreamerBoardRowDto> {
@@ -150,31 +155,31 @@ class BoardService(
         val boardOwner = socialMemberRepository.findByIdOrNull(streamerBoardRequest.boardOwnerId)
             ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
 
-        val board = boardRepository.save(streamerBoardRequest.to(boardOwner))
+        boardRepository.save(streamerBoardRequest.to(boardOwner))
 
         val categoryNames = listOf("공지 사항", "잡담 게시판")
-        val categories = categoryNames.map { CategoryEntity(board.id!!, it) }
+        val categories = categoryNames.map { CategoryEntity(it) }
         categories.forEach {
             categoryRepository.save(it)
         }
     }
 
+    fun getBoardById(boardId: Long): BoardResponse {
+        val findBoard = boardRepository.findByIdOrNull(boardId) ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
+        return BoardResponse.from(boardEntity = findBoard)
+    }
+
     @Transactional
     fun addCategoryToBoard(boardId: Long, request: CreateCategoryRequest) {
 
-        boardRepository.findByIdOrNull(boardId)
-            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
-
-        categoryRepository.save(request.toEntity())
-    }
-
-    fun getCategoriesByBoardId(boardId: Long): List<CategoryResponse> {
         val board = boardRepository.findByIdOrNull(boardId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
-
-        val categories = categoryRepository.findByBoardId(board.id!!)
-
-        return categories.map { CategoryResponse.from(it) }
+        board.categories.add(CategoryEntity(request.categoryName))
     }
 
+    @Transactional
+    fun getBoardByUrl(boardUrl: String): BoardUrlSearchResponse {
+        val board = boardRepository.findByBoardUrl(boardUrl)
+        return BoardUrlSearchResponse.from(board)
+    }
 }

@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface BoardJpaRepository: JpaRepository<BoardEntity, Long> {
     fun existsBoardEntityByBoardName(boardName: String): Boolean
+
+    fun findByBoardUrl(boardUrl: String): BoardEntity
 }

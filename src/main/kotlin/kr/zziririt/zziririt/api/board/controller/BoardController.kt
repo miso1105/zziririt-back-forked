@@ -8,8 +8,6 @@ import kr.zziririt.zziririt.api.board.service.CategoryService
 import kr.zziririt.zziririt.api.dto.CommonResponse
 import kr.zziririt.zziririt.global.responseEntity
 import kr.zziririt.zziririt.infra.security.UserPrincipal
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -25,23 +23,25 @@ class BoardController(
 ) {
     @PostMapping("/apply")
     fun createStreamerApply(
-        @RequestParam("image") multipartFile: List<MultipartFile>,
         @RequestParam request: String,
+        @RequestParam multipartFile: List<MultipartFile>,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         val mapper = jacksonObjectMapper()
-        val streamerBoardApplicationRequest = mapper.readValue(request, StreamerBoardApplicationRequest::class.java)
-        boardService.createStreamerBoardApplication(multipartFile, streamerBoardApplicationRequest, userPrincipal)
+        val requestObj = mapper.readValue(request, StreamerBoardApplicationRequest::class.java)
+        boardService.createStreamerBoardApplication(requestObj, multipartFile, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
     @PutMapping("/apply")
     fun updateStreamerApply(
-        @RequestPart("image") multipartFile: List<MultipartFile>,
-        @Valid @RequestPart streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
+        @RequestParam request: String,
+        @RequestParam multipartFile: List<MultipartFile>,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
-        boardService.updateStreamerBoardApplication(streamerBoardApplicationRequest, multipartFile, userPrincipal)
+        val mapper = jacksonObjectMapper()
+        val requestObj = mapper.readValue(request, StreamerBoardApplicationRequest::class.java)
+        boardService.updateStreamerBoardApplication(requestObj, multipartFile, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
@@ -104,18 +104,16 @@ class BoardController(
     }
 
     @GetMapping
-    fun getBoards(
-        @PageableDefault(size = 60) pageable: Pageable
-    ) = responseEntity(HttpStatus.OK) { boardService.getBoards(pageable) }
-
+    fun getBoards() = responseEntity(HttpStatus.OK) { boardService.getBoards() }
 
     @GetMapping("/active")
-    fun getActiveStatusBoards(
-        @PageableDefault(size = 60) pageable: Pageable
-    ) = responseEntity(HttpStatus.OK) { boardService.getActiveStatusBoards(pageable) }
+    fun getActiveStatusBoards() = responseEntity(HttpStatus.OK) { boardService.getActiveStatusBoards() }
 
     @GetMapping("/streamer")
     fun getStreamers() = responseEntity(HttpStatus.OK) { boardService.getStreamers() }
+
+    @GetMapping("/{boardId}")
+    fun getBoardById(@PathVariable boardId: Long) = responseEntity(HttpStatus.OK) { boardService.getBoardById(boardId) }
 
     @GetMapping("/categories/{categoryId}")
     fun getCategoryById(
@@ -131,14 +129,14 @@ class BoardController(
         @RequestBody request: CreateCategoryRequest
     ) = responseEntity(HttpStatus.OK) { boardService.addCategoryToBoard(boardId, request) }
 
-    @GetMapping(("/{boardId}"))
-    fun getCategoriesByBoardId(
-        @PathVariable boardId: Long
-    ) = responseEntity(HttpStatus.OK) { boardService.getCategoriesByBoardId(boardId) }
-
     @PutMapping("/categories/{categoryId}")
     fun updateCategoryName(
         @PathVariable categoryId: Long,
         @RequestBody request: UpdateCategoryNameRequest
     ) = responseEntity(HttpStatus.OK) { categoryService.updateCategoryById(categoryId, request)}
+
+    @GetMapping("search")
+    fun getBoardByUrl(
+        @RequestParam(value = "boardUrl", required = true) boardUrl: String
+    ) = responseEntity(HttpStatus.OK) { boardService.getBoardByUrl(boardUrl) }
 }

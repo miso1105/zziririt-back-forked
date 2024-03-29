@@ -5,8 +5,6 @@ import kr.zziririt.zziririt.infra.jpa.board.BoardJpaRepository
 import kr.zziririt.zziririt.infra.querydsl.board.BoardQueryDslRepositoryImpl
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
@@ -26,7 +24,7 @@ class BoardRepositoryImpl(
 
     override fun findAllById(idList: List<Long>): List<BoardEntity> = boardJpaRepository.findAllById(idList)
 
-    override fun findByPageable(pageable: Pageable): Page<BoardRowDto> = boardQueryDslRepositoryImpl.findByPageable(pageable)
+    override fun findBoards(): List<BoardRowDto> = boardQueryDslRepositoryImpl.findBoards()
 
     override fun existsBoardEntityByBoardName(boardName: String): Boolean = boardJpaRepository.existsBoardEntityByBoardName(boardName)
 
@@ -36,6 +34,7 @@ class BoardRepositoryImpl(
 
     override fun updateBoardStatusToInactive(inactiveBoardIdList: List<Long>) = boardQueryDslRepositoryImpl.updateBoardStatusToInactive(inactiveBoardIdList)
 
-    override fun findActiveStatusBoards(pageable: Pageable): Page<BoardRowDto> = boardQueryDslRepositoryImpl.findActiveStatusBoards(pageable)
+    override fun findActiveStatusBoards(): List<BoardRowDto> = boardQueryDslRepositoryImpl.findActiveStatusBoards()
 
+    override fun findByBoardUrl(boardUrl: String): BoardEntity = boardJpaRepository.findByBoardUrl(boardUrl)
 }
