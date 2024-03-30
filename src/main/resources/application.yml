@@ -148,3 +148,11 @@ logging:
           jdbc:
             bind: trace
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, openapi, swagger-ui
+  endpoint:
+    prometheus:
+      enabled: true
