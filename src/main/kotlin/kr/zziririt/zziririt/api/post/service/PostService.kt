@@ -6,6 +6,7 @@ import kr.zziririt.zziririt.api.post.dto.request.CreatePostRequest
 import kr.zziririt.zziririt.api.post.dto.request.UpdatePostRequest
 import kr.zziririt.zziririt.api.post.dto.response.PostResponse
 import kr.zziririt.zziririt.api.post.dto.response.ZziritStatusResponse
+import kr.zziririt.zziririt.domain.board.model.BoardActStatus
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
 import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
 import kr.zziririt.zziririt.domain.member.model.MemberRole
@@ -48,6 +49,10 @@ class PostService(
         val findBoard =
             boardRepository.findByIdOrNull(boardId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
         val findCategory = categoryRepository.findByIdOrNull(req.categoryId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        if (findBoard.boardActStatus == BoardActStatus.INACTIVE) {
+            findBoard.boardActStatus = BoardActStatus.ACTIVE
+        }
 
         return req
             .member(findSocialMember)

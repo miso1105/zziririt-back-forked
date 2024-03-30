@@ -3,9 +3,9 @@ package kr.zziririt.zziririt.api.board.service
 import kr.zziririt.zziririt.api.board.dto.request.*
 import kr.zziririt.zziririt.api.board.dto.response.BoardResponse
 import kr.zziririt.zziririt.api.board.dto.response.BoardUrlSearchResponse
+import kr.zziririt.zziririt.api.board.dto.response.CategoryResponse
 import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
-import kr.zziririt.zziririt.domain.board.repository.CategoryRepository
 import kr.zziririt.zziririt.domain.board.repository.StreamerBoardApplicationRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
@@ -28,7 +28,6 @@ class BoardService(
     private val boardRepository: BoardRepository,
     private val streamerBoardApplicationRepository: StreamerBoardApplicationRepository,
     private val s3Service: S3Service,
-    private val categoryRepository: CategoryRepository,
 ) {
     @Transactional
     fun createStreamerBoardApplication(
@@ -155,13 +154,9 @@ class BoardService(
         val boardOwner = socialMemberRepository.findByIdOrNull(streamerBoardRequest.boardOwnerId)
             ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
 
-        boardRepository.save(streamerBoardRequest.to(boardOwner))
-
-        val categoryNames = listOf("공지 사항", "잡담 게시판")
-        val categories = categoryNames.map { CategoryEntity(it) }
-        categories.forEach {
-            categoryRepository.save(it)
-        }
+        val board = boardRepository.save(streamerBoardRequest.to(boardOwner))
+        board.categories.add(CategoryEntity(categoryName = "공지사항"))
+        board.categories.add(CategoryEntity(categoryName = "잡담 게시판"))
     }
 
     fun getBoardById(boardId: Long): BoardResponse {
@@ -181,5 +176,12 @@ class BoardService(
     fun getBoardByUrl(boardUrl: String): BoardUrlSearchResponse {
         val board = boardRepository.findByBoardUrl(boardUrl)
         return BoardUrlSearchResponse.from(board)
+    }
+
+    @Transactional
+    fun getCategoriesByBoardId(boardId: Long): List<CategoryResponse> {
+        val board = boardRepository.findByIdOrNull(boardId) ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
+        val categories = board.categories
+        return categories.map { CategoryResponse.from(it) }
     }
 }
