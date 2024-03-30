@@ -9,6 +9,7 @@ enum class ErrorCode(
 ) {
     UNAUTHORIZED(1001, HttpStatus.UNAUTHORIZED, "해당 API에 대한 권한이 없습니다."),
     DUPLICATE_ROLE(1002, HttpStatus.BAD_REQUEST, "동일한 등급으로 변경할 수 없습니다."),
+    BANNED_MEMBER(1003, HttpStatus.BAD_REQUEST, "차단된 상태입니다."),
 
     POINT_POLICY_VIOLATION(4001, HttpStatus.BAD_REQUEST, "포인트는 0이상 이어야 합니다."),
     NOT_ENOUGH_POINT(4002, HttpStatus.BAD_REQUEST, "포인트 잔액이 부족합니다."),

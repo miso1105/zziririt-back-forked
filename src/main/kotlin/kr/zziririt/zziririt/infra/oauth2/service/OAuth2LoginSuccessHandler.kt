@@ -3,8 +3,10 @@ package kr.zziririt.zziririt.infra.oauth2.service
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kr.zziririt.zziririt.domain.member.model.LoginHistoryEntity
+import kr.zziririt.zziririt.domain.member.model.MemberStatus
 import kr.zziririt.zziririt.domain.member.repository.LoginHistoryRepository
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
+import kr.zziririt.zziririt.infra.aop.BanCheck
 import kr.zziririt.zziririt.infra.oauth2.dto.OAuth2MemberInfo
 import kr.zziririt.zziririt.infra.security.UserPrincipal
 import kr.zziririt.zziririt.infra.security.jwt.JwtAuthenticationToken
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class OAuth2LoginSuccessHandler(
@@ -26,6 +29,8 @@ class OAuth2LoginSuccessHandler(
     private val jwtProvider: JwtProvider
 ) : AuthenticationSuccessHandler {
 
+    @BanCheck
+    @Transactional
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -33,6 +38,8 @@ class OAuth2LoginSuccessHandler(
     ) {
         val memberInfo = authentication.principal as OAuth2MemberInfo
         val member = memberRepository.findByEmail(memberInfo.email)
+
+        member?.memberStatus = MemberStatus.NORMAL
 
         val ip = request.remoteAddr
         val environment = request.getHeader("user-Agent")
