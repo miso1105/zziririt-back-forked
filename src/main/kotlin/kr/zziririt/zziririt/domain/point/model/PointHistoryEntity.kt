@@ -10,13 +10,16 @@ import org.hibernate.annotations.SQLRestriction
 @Table(name = "point")
 @SQLDelete(sql = "UPDATE point SET is_deleted = true WHERE id = ?")
 @SQLRestriction(value = "is_deleted = false")
-class PointEntity(
-    @Column(name = "change", nullable = false)
-    val change: Long,
+class PointHistoryEntity(
+    @Column(name = "change_amount", nullable = false)
+    var changeAmount: Long,
+
+    @Column(name = "reason", nullable = false)
+    val reason: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "social_member_id", nullable = false)
-    val socialMember: SocialMemberEntity,
+    val member: SocialMemberEntity,
 ) : BaseEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

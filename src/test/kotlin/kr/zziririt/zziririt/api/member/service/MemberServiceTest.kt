@@ -10,6 +10,7 @@ import io.mockk.mockk
 import kr.zziririt.zziririt.api.member.controller.MemberController
 import kr.zziririt.zziririt.api.member.dto.request.AdjustRoleRequest
 import kr.zziririt.zziririt.api.member.dto.response.GetMyInfoResponse
+import kr.zziririt.zziririt.api.point.service.PointHistoryService
 import kr.zziririt.zziririt.domain.member.model.*
 import kr.zziririt.zziririt.domain.member.repository.LoginHistoryRepository
 import kr.zziririt.zziririt.domain.member.repository.MemberIconRepository
@@ -44,7 +45,8 @@ class MemberServiceTest() : BehaviorSpec({
     val memberIconRepository = mockk<MemberIconRepository>()
     val loginHistoryRepository = mockk<LoginHistoryRepository>()
     val bannedHistoryRepository = mockk<BannedHistoryRepository>()
-    val memberService = MemberService(memberRepository, memberIconRepository, loginHistoryRepository, bannedHistoryRepository)
+    val pointHistoryService = mockk<PointHistoryService>()
+    val memberService = MemberService(memberRepository, memberIconRepository, loginHistoryRepository, bannedHistoryRepository, pointHistoryService)
 
     val userPrincipal = UserPrincipal(1L, "email", roles = setOf(MemberRole.ADMIN.name), "providerId")
 

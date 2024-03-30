@@ -6,6 +6,7 @@ import kr.zziririt.zziririt.api.member.dto.request.ChangeMemberPointRequest
 import kr.zziririt.zziririt.api.member.dto.request.SelectMyIconRequest
 import kr.zziririt.zziririt.api.member.dto.request.SetBoardManagerRequest
 import kr.zziririt.zziririt.api.member.dto.response.GetMyInfoResponse
+import kr.zziririt.zziririt.api.point.service.PointHistoryService
 import kr.zziririt.zziririt.domain.member.model.ChangeDivision
 import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.model.MemberStatus
@@ -26,7 +27,8 @@ class MemberService(
     private val memberRepository: SocialMemberRepository,
     private val memberIconRepository: MemberIconRepository,
     private val loginHistoryRepository: LoginHistoryRepository,
-    private val bannedHistoryRepository: BannedHistoryRepository
+    private val bannedHistoryRepository: BannedHistoryRepository,
+    private val pointHistoryService: PointHistoryService
 ) {
 
     fun getMember(userPrincipal: UserPrincipal): GetMyInfoResponse {
@@ -125,8 +127,14 @@ class MemberService(
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         when (request.pointChangeType) {
-            ChangeDivision.PAYMENT -> memberCheck.pointPlus(request.value)
-            ChangeDivision.RECOVERY -> memberCheck.pointMinus(request.value)
+            ChangeDivision.PAYMENT -> {
+                memberCheck.pointPlus(request.value)
+                pointHistoryService.regPointHistory(request.value, "운영자 지급", memberCheck)
+            }
+            ChangeDivision.WITHDRAW -> {
+                memberCheck.pointMinus(request.value)
+                pointHistoryService.regPointHistory(request.value, "운영자 차감", memberCheck)
+            }
         }
     }
 
