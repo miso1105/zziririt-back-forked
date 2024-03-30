@@ -13,5 +13,5 @@ class CommentRepositoryImpl(
     override fun delete(commentEntity: CommentEntity) = commentJpaRepository.delete(commentEntity)
     override fun findByIdOrNull(commentId: Long): CommentEntity? = commentJpaRepository.findByIdOrNull(commentId)
     override fun findAllByPostId(postId: Long): List<CommentEntity>? =
-        commentJpaRepository.findAllByPostIdAndPrivateStatus(postId, false)
+        commentJpaRepository.findAllByPostId(postId)
 }

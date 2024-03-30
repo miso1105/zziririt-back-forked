@@ -3,6 +3,7 @@ package kr.zziririt.zziririt.api.comment.dto
 import kr.zziririt.zziririt.domain.comment.model.CommentEntity
 
 data class CommentResponse (
+    val commentId: Long,
     val memberId: Long,
     val memberNickname: String,
     val content: String,
@@ -13,6 +14,7 @@ data class CommentResponse (
 ) {
     companion object {
         fun from(commentEntity: CommentEntity, permissionToUpdateStatus: Boolean, permissionToDeleteStatus: Boolean) = CommentResponse(
+            commentId = commentEntity.id!!,
             memberId = commentEntity.socialMember.id!!,
             memberNickname = commentEntity.socialMember.nickname,
             content = commentEntity.content,

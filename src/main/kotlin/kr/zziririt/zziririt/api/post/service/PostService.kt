@@ -48,7 +48,8 @@ class PostService(
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
         val findBoard =
             boardRepository.findByIdOrNull(boardId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
-        val findCategory = categoryRepository.findByIdOrNull(req.categoryId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+        val findCategory =
+            categoryRepository.findByIdOrNull(req.categoryId) ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
         if (findBoard.boardActStatus == BoardActStatus.INACTIVE) {
             findBoard.boardActStatus = BoardActStatus.ACTIVE
@@ -61,7 +62,13 @@ class PostService(
             .toEntity().let {
                 postRepository.save(it)
             }.let {
-                PostResponse.of(it, true, true, null)
+                PostResponse.of(
+                    postEntity = it,
+                    permissionToUpdateStatus = true,
+                    permissionToDeleteStatus = true,
+                    comments = null,
+                    isZzirit = false
+                )
             }
     }
 
@@ -94,7 +101,15 @@ class PostService(
 
         val findComments = commentService.getComments(userPrincipal, postId)
 
-        return PostResponse.of(findPost, permissionToUpdateStatus, permissionToDeleteStatus, findComments)
+        val isZzirit = if (userPrincipal == null) {
+            false
+        } else {
+            val findZzirit =
+                zziritRepository.findZziritByMemberIdAndPostIdOrNull(userPrincipal.memberId, findPost.id!!)
+            findZzirit?.isZzirit ?: false
+        }
+
+        return PostResponse.of(findPost, permissionToUpdateStatus, permissionToDeleteStatus, findComments, isZzirit)
     }
 
     @Transactional(readOnly = true)
@@ -214,13 +229,15 @@ class PostService(
                 ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
             findPost.incrementZzirit()
 
-            return ZziritStatusResponse.of(zziritRepository.save(
-                ZziritEntity(
-                    socialMember = findSocialMember,
-                    entityId = postId,
-                    zziritEntityType = ZziritEntityType.POST
+            return ZziritStatusResponse.of(
+                zziritRepository.save(
+                    ZziritEntity(
+                        socialMember = findSocialMember,
+                        entityId = postId,
+                        zziritEntityType = ZziritEntityType.POST
+                    )
                 )
-            ))
+            )
         }
 
         if (findZzirit.toggleZzirit()) {

@@ -19,6 +19,7 @@ data class PostResponse(
     val permissionToUpdateStatus: Boolean,
     val permissionToDeleteStatus: Boolean,
     val zziritCount: Long,
+    val isZzirit: Boolean,
     val hit: Long,
     val commentResponses: List<CommentResponse>?,
     val createdAt: LocalDateTime,
@@ -28,7 +29,8 @@ data class PostResponse(
             postEntity: PostEntity,
             permissionToUpdateStatus: Boolean,
             permissionToDeleteStatus: Boolean,
-            comments: List<CommentResponse>?
+            comments: List<CommentResponse>?,
+            isZzirit: Boolean
         ): PostResponse = PostResponse(
             postId = postEntity.id!!,
             title = postEntity.title,
@@ -44,6 +46,7 @@ data class PostResponse(
             permissionToUpdateStatus = permissionToUpdateStatus,
             permissionToDeleteStatus = permissionToDeleteStatus,
             zziritCount = postEntity.zziritCount,
+            isZzirit = isZzirit,
             hit = postEntity.hit,
             commentResponses = comments,
             createdAt = postEntity.createdAt
