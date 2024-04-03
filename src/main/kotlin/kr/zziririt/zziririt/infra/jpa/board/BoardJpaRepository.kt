@@ -7,4 +7,6 @@ interface BoardJpaRepository: JpaRepository<BoardEntity, Long> {
     fun existsBoardEntityByBoardName(boardName: String): Boolean
 
     fun findByBoardUrl(boardUrl: String): BoardEntity
+
+    fun existsBoardEntityByBoardUrl(boardUrl: String): Boolean
 }

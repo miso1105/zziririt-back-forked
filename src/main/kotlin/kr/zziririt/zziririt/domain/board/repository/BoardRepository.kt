@@ -30,4 +30,5 @@ interface BoardRepository {
 
     fun findByBoardUrl(boardUrl: String): BoardEntity
 
+    fun existsBoardEntityByBoardUrl(boardUrl: String): Boolean
 }

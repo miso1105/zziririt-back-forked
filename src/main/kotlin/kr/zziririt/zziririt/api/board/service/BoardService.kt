@@ -7,6 +7,7 @@ import kr.zziririt.zziririt.api.board.dto.response.CategoryResponse
 import kr.zziririt.zziririt.domain.board.model.CategoryEntity
 import kr.zziririt.zziririt.domain.board.repository.BoardRepository
 import kr.zziririt.zziririt.domain.board.repository.StreamerBoardApplicationRepository
+import kr.zziririt.zziririt.domain.member.model.MemberRole
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
@@ -38,7 +39,15 @@ class BoardService(
         val findSocialMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
+        if (findSocialMember.memberRole == MemberRole.STREAMER) {
+            throw RestApiException(ErrorCode.DUPLICATE_ROLE)
+        }
+
         check(!boardRepository.existsBoardEntityByBoardName(streamerBoardApplicationRequest.applyBoardName)) {
+            throw RestApiException(ErrorCode.DUPLICATE_MODEL_NAME)
+        }
+
+        check(!boardRepository.existsBoardEntityByBoardUrl(streamerBoardApplicationRequest.applyUrl)) {
             throw RestApiException(ErrorCode.DUPLICATE_MODEL_NAME)
         }
 
@@ -52,6 +61,7 @@ class BoardService(
 
     @Transactional
     fun updateStreamerBoardApplication(
+        streamerBoardApplicationId: Long,
         streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
         multipartFile: List<MultipartFile>,
         userPrincipal: UserPrincipal
@@ -59,8 +69,17 @@ class BoardService(
         val findMember = socialMemberRepository.findByIdOrNull(userPrincipal.memberId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
 
-        val findStreamerApplication = streamerBoardApplicationRepository.findByIdOrNull(userPrincipal.memberId)
+        check(!boardRepository.existsBoardEntityByBoardName(streamerBoardApplicationRequest.applyBoardName)) {
+            throw RestApiException(ErrorCode.DUPLICATE_MODEL_NAME)
+        }
+
+        check(!boardRepository.existsBoardEntityByBoardUrl(streamerBoardApplicationRequest.applyUrl)) {
+            throw RestApiException(ErrorCode.DUPLICATE_MODEL_NAME)
+        }
+
+        val findStreamerApplication = streamerBoardApplicationRepository.findByIdOrNull(streamerBoardApplicationId)
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
         findStreamerApplication.update(
             applyUrl = streamerBoardApplicationRequest.applyUrl,
             applyBoardName = streamerBoardApplicationRequest.applyBoardName
@@ -70,7 +89,6 @@ class BoardService(
         imageUrl.forEach {
             val streamerBoardApplication = streamerBoardApplicationRequest.to(socialMemberEntity = findMember)
             streamerBoardApplication.uploadImage(it)
-            streamerBoardApplicationRepository.save(streamerBoardApplication)
         }
     }
 
@@ -153,6 +171,13 @@ class BoardService(
     fun createStreamerBoard(streamerBoardRequest: StreamerBoardRequest) {
         val boardOwner = socialMemberRepository.findByIdOrNull(streamerBoardRequest.boardOwnerId)
             ?: throw RestApiException(ErrorCode.MODEL_NOT_FOUND)
+
+        boardOwner.toStreamer()
+
+        val application = streamerBoardApplicationRepository.findByIdOrNull(streamerBoardRequest.streamerApplicationId)
+            ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
+
+        application.updateApplicationStatus(streamerBoardRequest.streamerBoardApplicationStatus)
 
         val board = boardRepository.save(streamerBoardRequest.to(boardOwner))
         board.categories.add(CategoryEntity(categoryName = "공지사항"))

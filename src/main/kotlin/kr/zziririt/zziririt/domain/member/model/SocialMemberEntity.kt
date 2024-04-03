@@ -54,6 +54,10 @@ class SocialMemberEntity(
         }
     }
 
+    fun toStreamer() {
+        this.memberRole = MemberRole.STREAMER
+    }
+
     fun toBoardManager() {
         this.memberRole = MemberRole.BOARD_MANAGER
     }

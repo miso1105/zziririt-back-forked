@@ -37,4 +37,6 @@ class BoardRepositoryImpl(
     override fun findActiveStatusBoards(): List<BoardRowDto> = boardQueryDslRepositoryImpl.findActiveStatusBoards()
 
     override fun findByBoardUrl(boardUrl: String): BoardEntity = boardJpaRepository.findByBoardUrl(boardUrl)
+
+    override fun existsBoardEntityByBoardUrl(boardUrl: String): Boolean = boardJpaRepository.existsBoardEntityByBoardUrl(boardUrl)
 }

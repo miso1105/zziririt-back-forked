@@ -33,15 +33,16 @@ class BoardController(
         return responseEntity(HttpStatus.OK)
     }
 
-    @PutMapping("/apply")
+    @PutMapping("/apply/{streamerBoardApplicationId}")
     fun updateStreamerApply(
+        @PathVariable streamerBoardApplicationId: Long,
         @RequestParam request: String,
         @RequestParam multipartFile: List<MultipartFile>,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<CommonResponse<Nothing>> {
         val mapper = jacksonObjectMapper()
         val requestObj = mapper.readValue(request, StreamerBoardApplicationRequest::class.java)
-        boardService.updateStreamerBoardApplication(requestObj, multipartFile, userPrincipal)
+        boardService.updateStreamerBoardApplication(streamerBoardApplicationId, requestObj, multipartFile, userPrincipal)
         return responseEntity(HttpStatus.OK)
     }
 
