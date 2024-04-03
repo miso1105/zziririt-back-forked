@@ -13,9 +13,10 @@ class AppStatusRunner(private val environment: Environment) : ApplicationRunner 
         kLogger.info { "===================다중 프로파일 테스트===================" }
         kLogger.info { "Active profiles : ${environment.activeProfiles.toList()}" }
         kLogger.info { "Datasource driver : ${environment.getProperty("spring.datasource.driver-class-name")}" }
-        kLogger.info { "Datasource url : ${environment.getProperty("spring.datasource.url")}" }
-        kLogger.info { "Datasource username : ${environment.getProperty("spring.datasource.username")}" }
-        kLogger.info { "Datasource password : ${environment.getProperty("spring.datasource.password")}" }
+        kLogger.info { "Datasource 1st url : ${environment.getProperty("spring.datasource.primary.hikari.jdbc-url")}" }
+        kLogger.info { "Datasource 2nd url : ${environment.getProperty("spring.datasource.secondary.hikari.jdbc-url")}" }
+        kLogger.info { "Datasource username : ${environment.getProperty("spring.datasource.primary.hikari.username")}" }
+        kLogger.info { "Datasource password : ${environment.getProperty("spring.datasource.primary.hikari.password")}" }
         kLogger.info { "Redis Host : ${environment.getProperty("spring.data.redis.host")}" }
         kLogger.info { "Redis Port : ${environment.getProperty("spring.data.redis.port")}" }
         kLogger.info { "Server Port : ${environment.getProperty("server.port")}" }

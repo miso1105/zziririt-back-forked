@@ -10,9 +10,23 @@ spring:
     activate:
       on-profile: prod_profile
   datasource:
-    url: ${SPRING_PROD_DATASOURCE_URL}
-    username: ${SPRING_PROD_DATASOURCE_USERNAME}
-    password: ${SPRING_PROD_DATASOURCE_PASSWORD}
+    primary:
+      hikari:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.postgresql.Driver
+        username: ${AWS_AURORA_DB_WRITER_INS_USERNAME}
+        password: ${AWS_AURORA_DB_WRITER_INS_PASSWORD}
+        jdbc-url: ${AWS_AURORA_DB_WRITER_INS_JDBC_URL}
+    secondary:
+      hikari:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.postgresql.Driver
+        username: ${AWS_AURORA_DB_READER_INS_USERNAME}
+        password: ${AWS_AURORA_DB_READER_INS_PASSWORD}
+        jdbc-url: ${AWS_AURORA_DB_READER_INS_JDBC_URL}
+    hikari:
+      pool-name: Hikari
+      auto-commit: false
   jpa:
     properties:
       hibernate:
