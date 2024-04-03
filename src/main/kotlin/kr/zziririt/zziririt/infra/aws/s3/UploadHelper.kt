@@ -1,4 +1,4 @@
-package kr.zziririt.zziririt.infra.aws
+package kr.zziririt.zziririt.infra.aws.s3
 
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.RestApiException

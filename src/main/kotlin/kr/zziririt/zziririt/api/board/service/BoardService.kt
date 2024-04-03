@@ -12,7 +12,7 @@ import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
-import kr.zziririt.zziririt.infra.aws.S3Service
+import kr.zziririt.zziririt.infra.aws.s3.S3Service
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
 import kr.zziririt.zziririt.infra.security.UserPrincipal

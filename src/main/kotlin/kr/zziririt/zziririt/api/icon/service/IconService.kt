@@ -11,7 +11,7 @@ import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
 import kr.zziririt.zziririt.global.exception.ErrorCode
 import kr.zziririt.zziririt.global.exception.ModelNotFoundException
 import kr.zziririt.zziririt.global.exception.RestApiException
-import kr.zziririt.zziririt.infra.aws.S3Service
+import kr.zziririt.zziririt.infra.aws.s3.S3Service
 import kr.zziririt.zziririt.infra.querydsl.member.dto.GetMyIconsDto
 import kr.zziririt.zziririt.infra.security.UserPrincipal
 import org.springframework.data.domain.PageImpl

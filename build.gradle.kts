@@ -47,6 +47,12 @@ val queryDslVersion = "5.0.0"
 
 val springCloudStarterAwsVersion = "2.0.1.RELEASE"
 
+val awsSesVersion = "1.0.0"
+
+val okhttp3Version = "5.0.0-alpha.11"
+
+val coroutineVersion = "1.6.4"
+
 val kotlinLoggerVersion = "6.0.2"
 
 val dotEnvVersion = "4.0.0"
@@ -88,6 +94,12 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
     //aws
     implementation("org.springframework.cloud:spring-cloud-starter-aws:$springCloudStarterAwsVersion")
+    //aws ses
+    implementation("aws.sdk.kotlin:ses:$awsSesVersion")
+    implementation("com.squareup.okhttp3:okhttp:$okhttp3Version") // okhttp3 관련 NoSuchMethodError 이슈로 업그레이드
+    //coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutineVersion")
     //log
     implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggerVersion")
     //.env

@@ -3,7 +3,7 @@ package kr.zziririt.zziririt.infra.oauth2.service
 import kr.zziririt.zziririt.domain.member.model.OAuth2Provider
 import kr.zziririt.zziririt.domain.member.model.SocialMemberEntity
 import kr.zziririt.zziririt.domain.member.repository.SocialMemberRepository
-import kr.zziririt.zziririt.infra.mailsender.MailService
+import kr.zziririt.zziririt.infra.mail.MailService
 import kr.zziririt.zziririt.infra.oauth2.dto.OAuth2MemberInfo
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

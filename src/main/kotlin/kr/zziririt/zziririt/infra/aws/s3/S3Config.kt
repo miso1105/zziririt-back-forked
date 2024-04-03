@@ -1,4 +1,4 @@
-package kr.zziririt.zziririt.infra.aws
+package kr.zziririt.zziririt.infra.aws.s3
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
