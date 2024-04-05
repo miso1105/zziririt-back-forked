@@ -1,7 +1,7 @@
 <img src= "img/ZZIRIRIT_5.png" width="700" height="250">
 
 <a href="http://zziririt.kr"><img src="https://img.shields.io/badge/zziririt-black?style=for-the-badge&logo=Google-chrome&logoColor=green"/></a>
-<a href="https://github.com/TeamBDMJ/Zziririt"><img src="https://img.shields.io/badge/release-v0.0.3-critical?style=for-the-badge&logo=google-chrome&logoColor=white"/></a>
+<a href="https://github.com/TeamBDMJ/Zziririt"><img src="https://img.shields.io/badge/release-v1.1.1-critical?style=for-the-badge&logo=google-chrome&logoColor=white"/></a>
 
 
 # 🌙 소개
@@ -21,7 +21,7 @@
 ---
 2024-02-26 ~ 2024-04-05
 
-<img src= "img/timeLine.png" width="700">
+<img src= "img/timeLine.png" width="800">
 
 
 
@@ -57,7 +57,18 @@
 
 ---
 
-<img src= "img/stack.png" width="550">
+### frontend
+<img src= "img/front.png" width="526">
+
+### backend
+<img src= "img/back.png" width="523">
+
+### 협업툴
+<img src= "img/collabTool.png" width="524">
+
+### infra
+<img src= "img/infra.png" width="521">
+
 
 
 
@@ -78,9 +89,3 @@
 ---
 
 <img src= "img/testCode.png" width="800">
-
-
-# ☄️ Trouble Shooting
-
----
-
