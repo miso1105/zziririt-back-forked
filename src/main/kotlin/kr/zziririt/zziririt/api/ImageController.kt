@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.io.Serializable
 
 @RestController
 @RequestMapping("/api/v1/images")
@@ -21,31 +22,6 @@ class ImageController(
     private val amazonS3Client: AmazonS3Client,
     private val s3Service: S3Service,
 ) {
-
-
-    // 코루틴 병렬처리
-//    @PostMapping("/imageUploadWithCoroutine")
-//    suspend fun imageUploadWithCoroutine(
-//        @RequestParam multipartFile: List<MultipartFile>,
-//    ) = withContext(Dispatchers.IO) {
-//        val uploadImage = multipartFile.map {
-//            val objectMetadata = ObjectMetadata().apply {
-//                this.contentType = it.contentType
-//                this.contentLength = it.size
-//            }
-//            async {
-//                val putObjectRequest = PutObjectRequest(
-//                    bucket,
-//                    "objectKey",
-//                    it.inputStream,
-//                    objectMetadata,
-//                )
-//                amazonS3Client.putObject(putObjectRequest)
-//            }
-//        }
-//    uploadImage.awaitAll()
-//    return@withContext "업로드 완료"
-//    }
 
     @PostMapping("/imageUploadWithCoroutine")
     suspend fun imageUploadWithCotoutine(@RequestParam multipartFile: List<MultipartFile>): String {
@@ -55,5 +31,10 @@ class ImageController(
     @PostMapping("/imageUpload")
     fun uploadImage(@RequestParam multipartFile: List<MultipartFile>): String {
         return s3Service.uploadFiles(dir = "test", multipartFile)
+    }
+
+    @PostMapping("/imageUploadWithPreSignedUrl")
+    fun uploadImageWithPreSignedUrl(@RequestParam multipartFile: List<MultipartFile>): Map<String, Serializable>? {
+        return s3Service.getPreSignedUrl(multipartFile)
     }
 }

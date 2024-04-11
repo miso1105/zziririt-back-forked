@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
-import com.sun.tools.javac.code.Kinds.KindSelector.VAL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -13,14 +12,11 @@ import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.servlet.function.ServerResponse
-import org.springframework.web.servlet.function.ServerResponse.async
 import java.io.IOException
 import java.io.InputStream
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Service
 class S3Service(
@@ -97,6 +93,28 @@ class S3Service(
 //        return "업로드 완료"
     }
 
+    fun getPreSignedUrl(fileNames: List<MultipartFile>): Map<String, Serializable>? {
+        val encodedFileName = fileNames.let { "${it}_${LocalDateTime.now()}" }
+//        val objectKey = encodedFileName.let { "test/${it}" }
+//        val encodedFileName = "${fileName}_${LocalDateTime.now()}"
+//        val objectKey = "test/${encodedFileName}"
 
+
+        val expiration = Date()
+        var expTimeMillis: Long = expiration.time
+        expTimeMillis += (3 * 60 * 1000).toLong() // 3분
+        expiration.time = expTimeMillis // url 만료 시간 설정
+
+        val generatePresignedUrlRequest: GeneratePresignedUrlRequest =
+            GeneratePresignedUrlRequest(bucket, "test/${encodedFileName}")
+            //            GeneratePresignedUrlRequest(bucket, objectKey)
+                .withMethod(HttpMethod.PUT)
+                .withExpiration(expiration)
+
+        return mapOf(
+            "preSignedUrl" to amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest),
+            "encodedFileName" to encodedFileName
+        )
+    }
 
 }
