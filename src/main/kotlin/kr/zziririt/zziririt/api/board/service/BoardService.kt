@@ -1,5 +1,6 @@
 package kr.zziririt.zziririt.api.board.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kr.zziririt.zziririt.api.board.dto.request.*
 import kr.zziririt.zziririt.api.board.dto.response.BoardResponse
 import kr.zziririt.zziririt.api.board.dto.response.BoardUrlSearchResponse
@@ -16,6 +17,8 @@ import kr.zziririt.zziririt.infra.aws.s3.S3Service
 import kr.zziririt.zziririt.infra.querydsl.board.BoardRowDto
 import kr.zziririt.zziririt.infra.querydsl.board.StreamerBoardRowDto
 import kr.zziririt.zziririt.infra.security.UserPrincipal
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -30,6 +33,7 @@ class BoardService(
     private val streamerBoardApplicationRepository: StreamerBoardApplicationRepository,
     private val s3Service: S3Service,
 ) {
+    private val logger = KotlinLogging.logger {}
     @Transactional
     fun createStreamerBoardApplication(
         streamerBoardApplicationRequest: StreamerBoardApplicationRequest,
@@ -54,7 +58,7 @@ class BoardService(
         val imageUrl = s3Service.uploadFiles(dir = "streamer_image", files = multipartFile)
         imageUrl.forEach {
             val streamerBoardApplication = streamerBoardApplicationRequest.to(socialMemberEntity = findSocialMember)
-            streamerBoardApplication.uploadImage(it)
+//            streamerBoardApplication.uploadImage(it)
             streamerBoardApplicationRepository.save(streamerBoardApplication)
         }
     }
@@ -85,11 +89,11 @@ class BoardService(
             applyBoardName = streamerBoardApplicationRequest.applyBoardName
         )
 
-        val imageUrl = s3Service.uploadFiles(dir = "update_streamer_image", files = multipartFile)
-        imageUrl.forEach {
-            val streamerBoardApplication = streamerBoardApplicationRequest.to(socialMemberEntity = findMember)
-            streamerBoardApplication.uploadImage(it)
-        }
+//        val imageUrl = s3Service.uploadFiles(dir = "update_streamer_image", files = multipartFile)
+//        imageUrl.forEach {
+//            val streamerBoardApplication = streamerBoardApplicationRequest.to(socialMemberEntity = findMember)
+//            streamerBoardApplication.uploadImage(it)
+//        }
     }
 
     @Transactional
@@ -160,11 +164,18 @@ class BoardService(
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
+//    @SchedulerLock(name = "boardStatusActiveToInactive", lockAtLeastFor = "14m", lockAtMostFor = "14m")
+    @Scheduled(cron = "*/15 * * * * *")
+    @SchedulerLock(name = "boardStatusActiveToInactive", lockAtLeastFor = "14s", lockAtMostFor = "14s")
     fun boardScheduler() {
-        val inactiveBoardIdList = boardRepository.findInactiveBoardStatus()
+        // To assert that the lock is held (prevents misconfiguration errors)
+        LockAssert.assertLocked()
 
+        val inactiveBoardIdList = boardRepository.findInactiveBoardStatus()
         boardRepository.updateBoardStatusToInactive(inactiveBoardIdList)
+
+        logger.debug { "scheduled task" }
     }
 
     @Transactional

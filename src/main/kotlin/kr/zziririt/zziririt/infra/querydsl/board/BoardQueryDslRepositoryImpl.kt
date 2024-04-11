@@ -45,8 +45,8 @@ class BoardQueryDslRepositoryImpl : QueryDslSupport(), BoardQueryDslRepository {
     }
 
     override fun findBoardStatusToInactive(): List<Long> {
-        val checkInactiveDate = LocalDateTime.now().minusDays(8)
-
+//        val checkInactiveDate = LocalDateTime.now().minusDays(8)
+        val checkInactiveDate = LocalDateTime.now().minusSeconds(30)
         return queryFactory.select(board.id).distinct()
             .from(post)
             .leftJoin(board)

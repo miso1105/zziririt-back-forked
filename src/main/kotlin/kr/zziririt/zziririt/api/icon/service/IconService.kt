@@ -34,10 +34,10 @@ class IconService (
             ?: throw ModelNotFoundException(ErrorCode.MODEL_NOT_FOUND)
         val iconUrl = s3Service.uploadFiles("icon", file)
 
-        iconUrl.forEach {
-            val newIcon = requestObj.toEntity(it)
-            iconRepository.save(newIcon)
-        }
+//        iconUrl.forEach {
+//            val newIcon = requestObj.toEntity(it)
+//            iconRepository.save(newIcon)
+//        }
     }
 
     fun deleteIcon(iconId: Long) {

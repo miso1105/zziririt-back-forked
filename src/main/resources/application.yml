@@ -66,6 +66,12 @@ server:
   port: 8080
 ---
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0B
+      max-file-size: 100MB
+      max-request-size: 100MB
   config:
     activate:
       on-profile: local_profile

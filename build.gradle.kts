@@ -123,6 +123,9 @@ dependencies {
     //prometheus
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
+    //shedLock
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.8.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.8.0")
 }
 
 tasks.withType<KotlinCompile> {
