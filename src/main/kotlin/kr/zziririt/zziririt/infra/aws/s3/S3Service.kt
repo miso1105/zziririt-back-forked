@@ -51,8 +51,10 @@ class S3Service(
     }
 
     suspend fun imageUploadWithCoroutine(dir: String, files: List<MultipartFile>) = withContext(Dispatchers.IO) {
+        val imageUrls = ArrayList<String>()
         val uploadImage = files.map {
             val randomFileName = "$dir/${UUID.randomUUID()}${LocalDateTime.now()}${it.originalFilename}"
+            val uploadFileUrl = amazonS3Client.getUrl(bucket, randomFileName).toString()
 
             it.originalFilename?.isImageFileOrThrow()
             val objectMetadata = ObjectMetadata().apply {
@@ -67,9 +69,11 @@ class S3Service(
                     objectMetadata,
                 )
                 amazonS3Client.putObject(putObjectRequest)
+                imageUrls.add(uploadFileUrl)
             }
         }
         uploadImage.awaitAll()
+//        return@withContext imageUrls
         return@withContext "업로드 완료"
 
 //        val imageUrls = ArrayList<String>()
@@ -107,9 +111,8 @@ class S3Service(
 
         val generatePresignedUrlRequest: GeneratePresignedUrlRequest =
             GeneratePresignedUrlRequest(bucket, "test/${encodedFileName}")
-            //            GeneratePresignedUrlRequest(bucket, objectKey)
-                .withMethod(HttpMethod.PUT)
-                .withExpiration(expiration)
+                //            GeneratePresignedUrlRequest(bucket, objectKey)
+                .withMethod(HttpMethod.PUT).withExpiration(expiration)
 
         return mapOf(
             "preSignedUrl" to amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest),

@@ -167,7 +167,7 @@ class BoardService(
 //    @Scheduled(cron = "0 0 0 * * *")
 //    @SchedulerLock(name = "boardStatusActiveToInactive", lockAtLeastFor = "14m", lockAtMostFor = "14m")
     @Scheduled(cron = "*/15 * * * * *")
-    @SchedulerLock(name = "boardStatusActiveToInactive", lockAtLeastFor = "14s", lockAtMostFor = "14s")
+    @SchedulerLock(name = "boardStatus_lock", lockAtLeastFor = "14s", lockAtMostFor = "14s")
     fun boardScheduler() {
         // To assert that the lock is held (prevents misconfiguration errors)
         LockAssert.assertLocked()
