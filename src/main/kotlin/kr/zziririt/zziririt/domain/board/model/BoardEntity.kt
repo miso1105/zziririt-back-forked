@@ -11,7 +11,7 @@ import org.hibernate.annotations.SQLRestriction
 @SQLDelete(sql = "UPDATE board SET is_deleted = true WHERE id = ?")
 @SQLRestriction(value = "is_deleted = false")
 class BoardEntity(
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "social_member_id", nullable = false)
     var socialMember: SocialMemberEntity,
 

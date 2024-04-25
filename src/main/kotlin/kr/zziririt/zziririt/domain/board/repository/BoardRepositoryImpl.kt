@@ -39,4 +39,6 @@ class BoardRepositoryImpl(
     override fun findByBoardUrl(boardUrl: String): BoardEntity = boardJpaRepository.findByBoardUrl(boardUrl)
 
     override fun existsBoardEntityByBoardUrl(boardUrl: String): Boolean = boardJpaRepository.existsBoardEntityByBoardUrl(boardUrl)
+
+    override fun saveAllAndFlush(entities: List<BoardEntity>): List<BoardEntity> = boardJpaRepository.saveAllAndFlush(entities)
 }

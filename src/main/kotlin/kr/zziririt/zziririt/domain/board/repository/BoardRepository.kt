@@ -31,4 +31,6 @@ interface BoardRepository {
     fun findByBoardUrl(boardUrl: String): BoardEntity
 
     fun existsBoardEntityByBoardUrl(boardUrl: String): Boolean
+
+    fun saveAllAndFlush(entities: List<BoardEntity>): List<BoardEntity>
 }
